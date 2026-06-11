@@ -18,7 +18,6 @@ interface AddExperienceFlowProps {
   open: boolean
   onClose: () => void
   selectMode: boolean
-  tempLocation: LatLng | null
   onStartMapPick: () => void
   onPlaceSelect: (place: { display_name: string; lat: number; lng: number }) => void
   onConfirmLocation: () => void
@@ -31,7 +30,6 @@ export function AddExperienceFlow({
   open,
   onClose,
   selectMode,
-  tempLocation,
   onStartMapPick,
   onPlaceSelect,
   onCancelLocation,
@@ -163,20 +161,7 @@ export function AddExperienceFlow({
     }
   }
 
-  if (!open) return null
-
-  if (selectMode) {
-    return (
-      <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-[1200] share-flow-map-hint max-w-xs w-[calc(100%-2rem)] animate-fade-in px-4 py-3">
-        <p className="text-sm text-charcoal-soft text-center">
-          {tempLocation ? 'Confirm below or tap another spot.' : 'Tap the map to place your pin.'}
-        </p>
-        <button type="button" className="share-flow-cancel mt-2 !py-1" onClick={handleChangePlace}>
-          Back
-        </button>
-      </div>
-    )
-  }
+  if (!open || selectMode) return null
 
   if (displayStep === 'pick_map') {
     return null

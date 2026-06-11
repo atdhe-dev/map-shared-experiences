@@ -679,6 +679,79 @@ body::after {
   box-shadow: 0 8px 28px rgba(20, 28, 34, 0.18);
 }
 
+.map-pick-bar {
+  position: absolute;
+  left: var(--mobile-inset, 14px);
+  right: var(--mobile-inset, 14px);
+  bottom: calc(var(--mobile-inset, 14px) + env(safe-area-inset-bottom, 0px));
+  z-index: 1100;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  animation: slide-up 0.25s ease;
+}
+
+@media (min-width: 768px) {
+  .map-pick-bar {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: 28rem;
+    width: calc(100% - 2rem);
+  }
+}
+
+.map-pick-bar__inner {
+  pointer-events: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 242, 238, 0.94) 100%);
+  border: 2px solid rgba(197, 205, 212, 0.45);
+  box-shadow: 0 8px 28px rgba(20, 28, 34, 0.18);
+}
+
+.map-pick-bar__confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.map-pick-bar__again {
+  border: none;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-stone);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.map-pick-bar__again:hover {
+  color: var(--color-charcoal);
+}
+
+.map-pick-bar__back {
+  border: none;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-stone);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.map-pick-bar__back:hover {
+  color: var(--color-charcoal-soft);
+}
+
 .share-flow-success {
   text-align: center;
   padding: 1.5rem 0.5rem 0.75rem;

@@ -1,4 +1,4 @@
-import { SelectLocationBanner, ConfirmLocationBar } from '../components/layout/MapOverlays'
+import { MapPickBar } from '../components/layout/MapOverlays'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Experience, ExperienceFilters, LatLng } from '../types'
 import {
@@ -59,7 +59,6 @@ export function MapPage() {
   const [confirmedLocation, setConfirmedLocation] = useState<LatLng | null>(null)
   const [locationName, setLocationName] = useState('')
   const [flyTo, setFlyTo] = useState<LatLng | null>(null)
-  const [showConfirmBar, setShowConfirmBar] = useState(false)
   const [addFlowKey, setAddFlowKey] = useState(0)
   const [previewExperience, setPreviewExperience] = useState<Experience | null>(null)
   const [reactionError, setReactionError] = useState<string | null>(null)
@@ -135,7 +134,6 @@ export function MapPage() {
   const handleMapClick = (latlng: LatLng) => {
     if (!selectMode) return
     setTempLocation(latlng)
-    setShowConfirmBar(true)
   }
 
   const handleStartAdd = () => {
@@ -146,7 +144,6 @@ export function MapPage() {
     setTempLocation(null)
     setConfirmedLocation(null)
     setLocationName('')
-    setShowConfirmBar(false)
   }
 
   const handleStartMapPick = () => {
@@ -155,7 +152,6 @@ export function MapPage() {
     setAddOpen(true)
     setTempLocation(null)
     setConfirmedLocation(null)
-    setShowConfirmBar(false)
   }
 
   const handlePlaceSelect = (place: { display_name: string; lat: number; lng: number }) => {
@@ -164,7 +160,6 @@ export function MapPage() {
     setLocationName(shortenPlaceName(place.display_name))
     setFlyTo({ lat: place.lat, lng: place.lng })
     setSelectMode(false)
-    setShowConfirmBar(false)
     setAddOpen(true)
     setPanel('add')
   }
@@ -172,7 +167,6 @@ export function MapPage() {
   const handleConfirmLocation = () => {
     if (tempLocation) {
       setConfirmedLocation(tempLocation)
-      setShowConfirmBar(false)
       setSelectMode(false)
       setAddOpen(true)
       setPanel('add')
@@ -183,7 +177,6 @@ export function MapPage() {
     setSelectMode(false)
     setTempLocation(null)
     setConfirmedLocation(null)
-    setShowConfirmBar(false)
     setLocationName('')
   }
 
@@ -253,11 +246,17 @@ export function MapPage() {
     setAddOpen(true)
   }
 
+  const handleMapPickBack = () => {
+    resetLocationState()
+    setPanel('add')
+    setAddOpen(true)
+    setAddFlowKey((k) => k + 1)
+  }
+
   const addFlowProps = {
     open: addOpen,
     onClose: closeAddFlow,
     selectMode,
-    tempLocation,
     onStartMapPick: handleStartMapPick,
     onPlaceSelect: handlePlaceSelect,
     onConfirmLocation: handleConfirmLocation,
@@ -368,20 +367,16 @@ export function MapPage() {
           </div>
         )}
 
-        {selectMode && !tempLocation && (
-          <SelectLocationBanner onCancel={handleCancelLocation} />
-        )}
-        {showConfirmBar && tempLocation && (
-          <ConfirmLocationBar
+        {selectMode && (
+          <MapPickBar
+            hasLocation={!!tempLocation}
             onConfirm={handleConfirmLocation}
-            onCancel={() => {
-              setTempLocation(null)
-              setShowConfirmBar(false)
-            }}
+            onChooseAgain={() => setTempLocation(null)}
+            onBack={handleMapPickBack}
           />
         )}
 
-        <BottomNav onAdd={handleStartAdd} />
+        {!selectMode && <BottomNav onAdd={handleStartAdd} />}
       </div>
 
       {isMobile && panel === 'search' && (
@@ -404,10 +399,6 @@ export function MapPage() {
             geoDenied={geoStatus === 'denied'}
           />
         </BottomSheet>
-      )}
-
-      {panel === 'add' && addOpen && selectMode && (
-        <AddExperienceFlow key={addFlowKey} {...addFlowProps} />
       )}
 
       {panel === 'add' && addOpen && !selectMode && (

@@ -85,6 +85,26 @@ npm run build
 npm run preview
 ```
 
+## Deploy on Vercel
+
+1. Import the GitHub repo at [vercel.com/new](https://vercel.com/new) (project: `map-shared-experiences`).
+2. **Framework preset:** Vite (auto-detected).
+3. **Build command:** `npm run build` · **Output directory:** `dist`
+4. Add **Environment Variables** (Project → Settings → Environment Variables) for **Production**, **Preview**, and **Development**:
+
+| Name | Value |
+|------|--------|
+| `VITE_SUPABASE_URL` | `https://qlcyzwiazguxqfcmacgh.supabase.co` (or your project URL) |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Your Supabase **anon / publishable** key from Dashboard → Project Settings → API |
+
+5. Click **Redeploy** after saving env vars (required — Vite bakes `VITE_*` at build time).
+
+Without these two variables the map loads but shows: *"Configure VITE_SUPABASE_URL…"* and pins stay empty.
+
+**`/admin` route:** `vercel.json` includes SPA rewrites so `/admin` works on refresh.
+
+**Supabase:** In Supabase Dashboard → Authentication → URL Configuration, add your Vercel URL (e.g. `https://your-app.vercel.app`) to **Site URL** and **Redirect URLs** if you use admin login.
+
 ## License
 
 Private project
