@@ -26,6 +26,7 @@ import { BottomSheet } from '../components/ui/BottomSheet'
 import { Modal } from '../components/ui/Modal'
 import { LoadingSpinner, EmptyState } from '../components/ui/CategoryChip'
 import { shortenPlaceName } from '../lib/geocoding'
+import { WELCOME_DISMISSED_KEY } from '../lib/constants'
 
 type Panel = 'none' | 'search' | 'filter' | 'add' | 'detail'
 
@@ -62,6 +63,13 @@ export function MapPage() {
   const [addFlowKey, setAddFlowKey] = useState(0)
   const [previewExperience, setPreviewExperience] = useState<Experience | null>(null)
   const [reactionError, setReactionError] = useState<string | null>(null)
+  const [welcomeActive, setWelcomeActive] = useState(() => {
+    try {
+      return localStorage.getItem(WELCOME_DISMISSED_KEY) !== 'true'
+    } catch {
+      return true
+    }
+  })
 
   const loadExperiences = useCallback(async () => {
     if (!isSupabaseConfigured) {
@@ -294,16 +302,22 @@ export function MapPage() {
           insetControls={isMobile}
         />
 
-        <WelcomeOverlay onExplore={() => {}} onShare={handleStartAdd} />
-
-        <MapTopBar
-          compact={isMobile}
-          onSearch={() => setPanel(panel === 'search' ? 'none' : 'search')}
-          onFilter={() => setPanel(panel === 'filter' ? 'none' : 'filter')}
-          searchActive={panel === 'search'}
-          filterActive={panel === 'filter'}
-          showSearch={isMobile}
+        <WelcomeOverlay
+          onExplore={() => {}}
+          onShare={handleStartAdd}
+          onActiveChange={setWelcomeActive}
         />
+
+        {(!isMobile || !welcomeActive) && (
+          <MapTopBar
+            compact={isMobile}
+            onSearch={() => setPanel(panel === 'search' ? 'none' : 'search')}
+            onFilter={() => setPanel(panel === 'filter' ? 'none' : 'filter')}
+            searchActive={panel === 'search'}
+            filterActive={panel === 'filter'}
+            showSearch={isMobile}
+          />
+        )}
 
         {showNearMeCard && nearbyExperiences.length > 0 && (
           <div className="absolute bottom-[calc(var(--mobile-bottom-clearance)+12px)] md:bottom-8 left-4 md:left-6 z-[1000] max-w-[calc(100%-2rem)]">
@@ -376,7 +390,7 @@ export function MapPage() {
           />
         )}
 
-        {!selectMode && <BottomNav onAdd={handleStartAdd} />}
+        {!selectMode && (!isMobile || !welcomeActive) && <BottomNav onAdd={handleStartAdd} />}
       </div>
 
       {isMobile && panel === 'search' && (
