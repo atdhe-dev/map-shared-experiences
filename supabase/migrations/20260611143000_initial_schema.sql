@@ -1,0 +1,2 @@
+-- Local reference copy of migration applied via Supabase MCP (initial_schema)
+-- Profiles, experiences, reactions, RLS, storage bucket, and RPC functions
