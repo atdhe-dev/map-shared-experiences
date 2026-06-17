@@ -1,4 +1,4 @@
-import { Search, PenLine, LayoutGrid } from 'lucide-react'
+import { PenLine, LayoutGrid } from 'lucide-react'
 
 export type AppViewMode = 'desk' | 'map'
 
@@ -11,41 +11,18 @@ interface HomeHudProps {
   hidden?: boolean
 }
 
-export function HomeHud({
-  viewMode,
-  onExplore,
-  onWrite,
-  onToggleView,
-  exploreOpen,
-  hidden,
-}: HomeHudProps) {
+export function HomeHud({ onWrite, onToggleView, hidden }: HomeHudProps) {
   if (hidden) return null
 
-  const isDesk = viewMode === 'desk'
-
   return (
-    <nav className="wall-hud" aria-label="Navigation">
-      <button
-        type="button"
-        className={`wall-hud__icon-btn${exploreOpen ? ' wall-hud__icon-btn--active' : ''}`}
-        onClick={onExplore}
-        aria-label="Search"
-      >
-        <Search size={18} strokeWidth={2} aria-hidden />
+    <nav className="map-hud" aria-label="Map navigation">
+      <button type="button" className="map-hud__wall-btn" onClick={onToggleView} aria-label="Back to wall">
+        <LayoutGrid size={16} strokeWidth={2} aria-hidden />
+        Wall
       </button>
-
-      <button type="button" className="wall-hud__write-btn" onClick={onWrite}>
+      <button type="button" className="map-hud__write-btn" onClick={onWrite} aria-label="Write a note">
         <PenLine size={16} strokeWidth={2} aria-hidden />
-        <span>Write</span>
-      </button>
-
-      <button
-        type="button"
-        className="wall-hud__icon-btn"
-        onClick={onToggleView}
-        aria-label="Wall"
-      >
-        <LayoutGrid size={18} strokeWidth={2} aria-hidden />
+        Write
       </button>
     </nav>
   )

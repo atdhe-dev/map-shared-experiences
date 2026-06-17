@@ -831,8 +831,8 @@ body:has(.app-viewport--map)::after {
 
 /* ─── Inline name search ─── */
 .wall__search-wrap {
-  padding: 12px max(16px, env(safe-area-inset-left)) 10px;
-  border-bottom: 1px solid var(--app-border);
+  padding: 14px max(16px, env(safe-area-inset-left)) 14px;
+  background: var(--app-bg);
 }
 
 .wall__search-field {
@@ -843,7 +843,7 @@ body:has(.app-viewport--map)::after {
 
 .wall__search-icon {
   position: absolute;
-  left: 13px;
+  left: 14px;
   color: var(--app-text-tertiary);
   pointer-events: none;
   flex-shrink: 0;
@@ -851,18 +851,19 @@ body:has(.app-viewport--map)::after {
 
 .wall__search-input {
   width: 100%;
-  height: 40px;
-  padding: 0 36px 0 38px;
-  border: 1.5px solid rgba(0, 0, 0, 0.10);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
+  height: 44px;
+  padding: 0 40px 0 40px;
+  border: 1.5px solid rgba(0, 0, 0, 0.13);
+  border-radius: 12px;
+  background: #ffffff;
   font-family: var(--app-font);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   color: var(--app-text);
   outline: none;
   -webkit-appearance: none;
   appearance: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .wall__search-input::placeholder {
@@ -870,8 +871,8 @@ body:has(.app-viewport--map)::after {
 }
 
 .wall__search-input:focus {
-  border-color: rgba(0, 0, 0, 0.22);
-  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.28);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .wall__search-input::-webkit-search-cancel-button {
@@ -880,7 +881,7 @@ body:has(.app-viewport--map)::after {
 
 .wall__search-clear {
   position: absolute;
-  right: 10px;
+  right: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
