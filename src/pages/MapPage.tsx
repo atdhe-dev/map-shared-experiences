@@ -340,8 +340,9 @@ export function MapPage() {
             error={error}
             emptyFiltered={emptyFiltered}
             emptyDesk={emptyDesk}
+            searchQuery={filters.searchQuery}
+            onSearchChange={(q) => setFilters((f) => ({ ...f, searchQuery: q }))}
             onWrite={handleStartAdd}
-            onSearch={toggleExplore}
             onToggleView={toggleViewMode}
           />
         )}

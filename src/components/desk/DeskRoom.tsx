@@ -1,4 +1,4 @@
-import { Search, PenLine, Map as MapIcon } from 'lucide-react'
+import { Search, PenLine, Map as MapIcon, X } from 'lucide-react'
 import type { Experience } from '../../types'
 import { DeskLetterCard } from './DeskLetterCard'
 
@@ -9,8 +9,9 @@ interface DeskRoomProps {
   error?: string | null
   emptyFiltered?: boolean
   emptyDesk?: boolean
+  searchQuery?: string
+  onSearchChange?: (q: string) => void
   onWrite?: () => void
-  onSearch?: () => void
   onToggleView?: () => void
 }
 
@@ -21,8 +22,9 @@ export function DeskRoom({
   error,
   emptyFiltered,
   emptyDesk,
+  searchQuery = '',
+  onSearchChange,
   onWrite,
-  onSearch,
   onToggleView,
 }: DeskRoomProps) {
   return (
@@ -34,22 +36,8 @@ export function DeskRoom({
         </div>
 
         <div className="wall__header-actions">
-          {onSearch && (
-            <button
-              type="button"
-              className="wall__hdr-icon"
-              onClick={onSearch}
-              aria-label="Search"
-            >
-              <Search size={17} strokeWidth={2} aria-hidden />
-            </button>
-          )}
           {onWrite && (
-            <button
-              type="button"
-              className="wall__hdr-write"
-              onClick={onWrite}
-            >
+            <button type="button" className="wall__hdr-write" onClick={onWrite}>
               <PenLine size={13} strokeWidth={2} aria-hidden />
               Write
             </button>
@@ -67,6 +55,35 @@ export function DeskRoom({
         </div>
       </header>
 
+      {onSearchChange !== undefined && (
+        <div className="wall__search-wrap">
+          <div className="wall__search-field">
+            <Search size={15} strokeWidth={2} className="wall__search-icon" aria-hidden />
+            <input
+              type="search"
+              className="wall__search-input"
+              placeholder="Search a name…"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              aria-label="Search by name"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                className="wall__search-clear"
+                onClick={() => onSearchChange('')}
+                aria-label="Clear search"
+              >
+                <X size={13} strokeWidth={2.5} aria-hidden />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="wall__board-wrap">
         {loading && <p className="wall__empty">Loading…</p>}
         {error && !loading && <p className="wall__empty">{error}</p>}
@@ -74,7 +91,11 @@ export function DeskRoom({
           <p className="wall__empty">No notes yet. Tap Write to add the first one.</p>
         )}
         {!loading && !error && emptyFiltered && (
-          <p className="wall__empty">Nothing here yet.</p>
+          <p className="wall__empty">
+            {searchQuery
+              ? `No notes for "${searchQuery}" yet.`
+              : 'Nothing here yet.'}
+          </p>
         )}
 
         {!loading && !error && experiences.length > 0 && (

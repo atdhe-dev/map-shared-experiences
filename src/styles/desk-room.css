@@ -829,6 +829,72 @@ body:has(.app-viewport--map)::after {
   background: var(--app-elevated);
 }
 
+/* ─── Inline name search ─── */
+.wall__search-wrap {
+  padding: 12px max(16px, env(safe-area-inset-left)) 10px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.wall__search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.wall__search-icon {
+  position: absolute;
+  left: 13px;
+  color: var(--app-text-tertiary);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.wall__search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 36px 0 38px;
+  border: 1.5px solid rgba(0, 0, 0, 0.10);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  font-family: var(--app-font);
+  font-size: 0.9375rem;
+  color: var(--app-text);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.wall__search-input::placeholder {
+  color: var(--app-text-tertiary);
+}
+
+.wall__search-input:focus {
+  border-color: rgba(0, 0, 0, 0.22);
+  background: #ffffff;
+}
+
+.wall__search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.wall__search-clear {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: var(--app-text-tertiary);
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* ─── Feeling filter — text pills ─── */
 .wall__feeling-filter {
   display: flex;
