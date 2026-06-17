@@ -1,4 +1,4 @@
-import { Search, PenLine, Map as MapIcon } from 'lucide-react'
+import { Search, PenLine, LayoutGrid } from 'lucide-react'
 
 export type AppViewMode = 'desk' | 'map'
 
@@ -43,9 +43,9 @@ export function HomeHud({
         type="button"
         className="wall-hud__icon-btn"
         onClick={onToggleView}
-        aria-label={isDesk ? 'Map' : 'Wall'}
+        aria-label="Wall"
       >
-        <MapIcon size={18} strokeWidth={2} aria-hidden />
+        <LayoutGrid size={18} strokeWidth={2} aria-hidden />
       </button>
     </nav>
   )
