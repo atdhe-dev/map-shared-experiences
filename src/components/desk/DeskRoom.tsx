@@ -1,6 +1,7 @@
+import { useMemo, useState, useEffect } from 'react'
 import { Search, PenLine, Map as MapIcon, X } from 'lucide-react'
 import type { Experience } from '../../types'
-import { PlaceCard } from './PlaceCard'
+import { PlaceCard, getPlaceLabel } from './PlaceCard'
 
 interface DeskRoomProps {
   experiences: Experience[]
@@ -27,6 +28,38 @@ export function DeskRoom({
   onWrite,
   onToggleView,
 }: DeskRoomProps) {
+  const [selectedPlace, setSelectedPlace] = useState<string | null>(null)
+
+  const placeOptions = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const exp of experiences) {
+      const label = getPlaceLabel(exp)
+      if (!label) continue
+      counts.set(label, (counts.get(label) ?? 0) + 1)
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, count]) => ({ label, count }))
+  }, [experiences])
+
+  const visibleExperiences = useMemo(() => {
+    if (!selectedPlace) return experiences
+    return experiences.filter((exp) => getPlaceLabel(exp) === selectedPlace)
+  }, [experiences, selectedPlace])
+
+  useEffect(() => {
+    if (selectedPlace && !placeOptions.some((p) => p.label === selectedPlace)) {
+      setSelectedPlace(null)
+    }
+  }, [selectedPlace, placeOptions])
+
+  const statsText = useMemo(() => {
+    const n = visibleExperiences.length
+    const word = n === 1 ? 'letter' : 'letters'
+    if (selectedPlace) return `${n} ${word} · ${selectedPlace}`
+    return `${n} ${word} across North Macedonia`
+  }, [visibleExperiences.length, selectedPlace])
+
   return (
     <div className="wall" aria-label="Wall of unsent messages">
       <header className="wall__header">
@@ -84,6 +117,34 @@ export function DeskRoom({
         </div>
       )}
 
+      {!loading && !error && experiences.length > 0 && (
+        <div className="wall__feed-meta">
+          <p className="wall__stats">{statsText}</p>
+          {placeOptions.length > 1 && (
+            <div className="wall__place-filter" role="group" aria-label="Filter by place">
+              <button
+                type="button"
+                className={`wall__place-chip${selectedPlace === null ? ' wall__place-chip--active' : ''}`}
+                onClick={() => setSelectedPlace(null)}
+              >
+                All
+              </button>
+              {placeOptions.map(({ label, count }) => (
+                <button
+                  key={label}
+                  type="button"
+                  className={`wall__place-chip${selectedPlace === label ? ' wall__place-chip--active' : ''}`}
+                  onClick={() => setSelectedPlace(selectedPlace === label ? null : label)}
+                >
+                  {label}
+                  <span className="wall__place-chip-count">{count}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="wall__board-wrap">
         {loading && <p className="wall__empty">Loading…</p>}
         {error && !loading && <p className="wall__empty">{error}</p>}
@@ -98,9 +159,13 @@ export function DeskRoom({
           </p>
         )}
 
-        {!loading && !error && experiences.length > 0 && (
+        {!loading && !error && visibleExperiences.length === 0 && experiences.length > 0 && selectedPlace && (
+          <p className="wall__empty">No letters from {selectedPlace} yet.</p>
+        )}
+
+        {!loading && !error && visibleExperiences.length > 0 && (
           <div className="wall__board" role="list">
-            {experiences.map((exp) => (
+            {visibleExperiences.map((exp) => (
               <div key={exp.id} className="wall__slot" role="listitem">
                 <PlaceCard experience={exp} onClick={onRead} />
               </div>
