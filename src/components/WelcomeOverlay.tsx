@@ -8,7 +8,7 @@ interface WelcomeOverlayProps {
   onActiveChange?: (active: boolean) => void
 }
 
-export function WelcomeOverlay({ onExplore, onShare, onActiveChange }: WelcomeOverlayProps) {
+export function WelcomeOverlay({ onShare, onActiveChange }: WelcomeOverlayProps) {
   const [dismissed, setDismissed] = useLocalStorageBoolean(WELCOME_DISMISSED_KEY)
 
   useEffect(() => {
@@ -20,23 +20,17 @@ export function WelcomeOverlay({ onExplore, onShare, onActiveChange }: WelcomeOv
   return (
     <div className="welcome-diary" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
       <div className="welcome-diary__inner">
-        <h1 id="welcome-title" className="welcome-diary__mark">
+        <p className="welcome-diary__eyebrow">unsent</p>
+        <h2 id="welcome-title" className="welcome-diary__mark">
           Words people never got to say
-        </h1>
-        <p className="welcome-diary__text">
-          Anonymous letters pinned to a wall — each one from someone,
-          to someone who never received it.
-        </p>
+        </h2>
         <div className="welcome-diary__actions">
           <button
             type="button"
             className="welcome-diary__btn"
-            onClick={() => {
-              setDismissed(true)
-              onExplore()
-            }}
+            onClick={() => setDismissed(true)}
           >
-            Explore
+            Read
           </button>
           <button
             type="button"
@@ -46,7 +40,7 @@ export function WelcomeOverlay({ onExplore, onShare, onActiveChange }: WelcomeOv
               onShare()
             }}
           >
-            Write a note
+            Write
           </button>
         </div>
       </div>

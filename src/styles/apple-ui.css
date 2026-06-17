@@ -761,6 +761,47 @@
   cursor: pointer;
 }
 
+/* ─── Write prompt styles ─── */
+.apple-sheet .write-prompt-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.apple-sheet .write-prompt-label {
+  font-family: var(--app-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--app-text);
+  line-height: 1.3;
+}
+
+.apple-sheet .write-feeling-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.apple-sheet .write-feeling-label {
+  font-family: var(--app-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+.apple-sheet .write-feeling-selected {
+  font-weight: 500;
+  color: var(--app-text-secondary);
+}
+
+.apple-sheet .write-char-hint {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--app-text-tertiary);
+  text-align: right;
+  margin: 0;
+}
+
 .apple-sheet .share-flow-success {
   text-align: center;
   padding: 12px 0 4px;

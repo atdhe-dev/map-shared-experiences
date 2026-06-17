@@ -5,7 +5,6 @@ import {
   addReaction,
   fetchApprovedExperiences,
   filterExperiences,
-  reportExperience,
 } from '../lib/experiences'
 import { hasReactedToExperience } from '../lib/fingerprint'
 import { isSupabaseConfigured } from '../lib/supabase'
@@ -48,7 +47,6 @@ export function MapPage() {
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null)
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({})
   const [reacting, setReacting] = useState(false)
-  const [reporting, setReporting] = useState(false)
 
   const [addOpen, setAddOpen] = useState(false)
   const [selectMode, setSelectMode] = useState(false)
@@ -256,24 +254,6 @@ export function MapPage() {
     }
   }
 
-  const handleReport = async (id: string) => {
-    if (!confirm('Report this message for moderation review?')) return
-    setReporting(true)
-    setReactionError(null)
-    try {
-      await reportExperience(id)
-      setExperiences((prev) =>
-        prev.map((e) =>
-          e.id === id ? { ...e, reports_count: e.reports_count + 1 } : e,
-        ),
-      )
-    } catch (err) {
-      setReactionError(err instanceof Error ? err.message : 'Could not report message.')
-    } finally {
-      setReporting(false)
-    }
-  }
-
   const handleCancelLocation = () => {
     resetLocationState()
     setPanel('add')
@@ -338,10 +318,8 @@ export function MapPage() {
             ? () => handleOpenAdjacent(filteredExperiences[selectedIndex - 1])
             : undefined,
         onReact: handleReact,
-        onReport: handleReport,
         onViewOnMap: () => handleViewOnMap(selectedExperience),
         reacting,
-        reporting,
         reactionCount:
           reactionCounts[selectedExperience.id] ?? selectedExperience.reactions_count,
         hasReacted: hasReactedToExperience(selectedExperience.id),
@@ -362,6 +340,8 @@ export function MapPage() {
             error={error}
             emptyFiltered={emptyFiltered}
             emptyDesk={emptyDesk}
+            activeColor={filters.emotionColor}
+            onColorFilter={(color) => setFilters((f) => ({ ...f, emotionColor: color }))}
           />
         )}
 

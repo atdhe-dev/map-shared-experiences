@@ -23,7 +23,7 @@ export function DeskLetterCard({ experience, index, onClick }: DeskLetterCardPro
       <span className="sticky-note__pin" aria-hidden />
       <span className="sticky-note__to">To:</span>
       <span className="sticky-note__name">{messageTo}</span>
-      <span className="sticky-note__text">&ldquo;{truncateText(experience.title, 72)}&rdquo;</span>
+      <span className="sticky-note__text">&ldquo;{truncateText(experience.story, 72)}&rdquo;</span>
     </button>
   )
 }

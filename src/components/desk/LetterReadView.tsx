@@ -1,17 +1,15 @@
 import { useLayoutEffect, useRef } from 'react'
+import { Heart } from 'lucide-react'
 import type { Experience } from '../../types'
-import { getAuthorDisplay } from '../../lib/format'
-import { hasExperienceLocation } from '../../lib/experienceLocation'
 import { getMessageTo } from '../../lib/messageHelpers'
 import { getStickyNoteStyle } from '../../lib/stickyNoteVariants'
+import { hasExperienceLocation } from '../../lib/experienceLocation'
 import { NoteLocationMap } from './NoteLocationMap'
 
-function pageMeta(experience: Experience): string {
+function formatExactDate(experience: Experience): string {
   const when = experience.memory_date || experience.created_at
   const date = new Date(when)
-  const year = date.getFullYear()
-  const month = date.toLocaleDateString('en-GB', { month: 'long' }).toUpperCase()
-  return `${month} ${year}`
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 interface LetterReadViewProps {
@@ -24,10 +22,8 @@ interface LetterReadViewProps {
   onNext?: () => void
   onPrevious?: () => void
   onReact: (id: string) => void
-  onReport?: (id: string) => void
   onViewOnMap?: () => void
   reacting: boolean
-  reporting?: boolean
   reactionCount: number
   hasReacted: boolean
   reactionError?: string | null
@@ -35,27 +31,22 @@ interface LetterReadViewProps {
 
 export function LetterReadView({
   experience,
-  pageIndex,
-  pageTotal,
   nextExperience,
   previousExperience,
   onClose,
   onNext,
   onPrevious,
   onReact,
-  onReport,
   onViewOnMap,
   reacting,
-  reporting,
   reactionCount,
   hasReacted,
   reactionError,
 }: LetterReadViewProps) {
   const messageTo = getMessageTo(experience)
-  const messageFrom = getAuthorDisplay(experience)
   const showPlace = hasExperienceLocation(experience)
   const pageRef = useRef<HTMLDivElement>(null)
-  const noteIndex = pageIndex != null ? pageIndex - 1 : 0
+  const noteIndex = 0
 
   useLayoutEffect(() => {
     pageRef.current?.scrollTo(0, 0)
@@ -67,9 +58,6 @@ export function LetterReadView({
         <button type="button" className="note-read__back" onClick={onClose}>
           Done
         </button>
-        {pageIndex != null && pageTotal != null && pageTotal > 0 && (
-          <span className="note-read__index">{pageIndex} of {pageTotal}</span>
-        )}
       </header>
 
       <div className="note-read__stage">
@@ -84,13 +72,7 @@ export function LetterReadView({
             <h1 id="note-read-name" className="letter-sheet__name">
               {messageTo}
             </h1>
-            <p className="letter-sheet__from">
-              <span className="letter-sheet__label">From:</span>
-              <span className="letter-sheet__from-name">{messageFrom}</span>
-            </p>
           </header>
-
-          <p className="letter-sheet__hook">&ldquo;{experience.title}&rdquo;</p>
 
           <div className="letter-sheet__body">
             {experience.story.split('\n').map((para, i) => (
@@ -108,49 +90,42 @@ export function LetterReadView({
           )}
 
           <footer className="letter-sheet__foot">
-            <p className="letter-sheet__meta">{pageMeta(experience)}</p>
+            <p className="letter-sheet__meta">{formatExactDate(experience)}</p>
 
-            <div className="letter-sheet__actions">
+            <div className="letter-seal-wrap">
               <button
                 type="button"
                 disabled={hasReacted || reacting}
                 onClick={() => onReact(experience.id)}
-                className="letter-sheet__action letter-sheet__action--primary"
+                className={`letter-seal${hasReacted ? ' letter-seal--reacted' : ''}`}
               >
-                {hasReacted ? 'Stayed with me' : reacting ? '…' : 'This stayed with me'}
+                <Heart
+                  size={18}
+                  strokeWidth={1.75}
+                  fill={hasReacted ? 'currentColor' : 'none'}
+                  aria-hidden
+                />
+                <span>{hasReacted ? 'Stayed with me' : 'This stayed with me'}</span>
               </button>
-
-              <div className="letter-sheet__actions-row">
-                {reactionCount > 0 && (
-                  <span className="letter-sheet__meta">{reactionCount} felt this</span>
-                )}
-                {onReport && (
-                  <button
-                    type="button"
-                    disabled={reporting}
-                    onClick={() => onReport(experience.id)}
-                    className="letter-sheet__action letter-sheet__action--muted"
-                  >
-                    Report
-                  </button>
-                )}
-              </div>
+              {reactionCount > 0 && (
+                <span className="letter-seal__count">{reactionCount} felt this</span>
+              )}
             </div>
 
             {reactionError && <p className="letter-sheet__error">{reactionError}</p>}
           </footer>
         </article>
 
-        {(nextExperience || previousExperience) && (
+        {(previousExperience || nextExperience) && (
           <nav className="note-read__nav" aria-label="More notes">
-            {nextExperience && onNext && (
-              <button type="button" className="note-read__nav-btn" onClick={onNext}>
-                Next · To {getMessageTo(nextExperience)}
-              </button>
-            )}
             {previousExperience && onPrevious && (
               <button type="button" className="note-read__nav-btn" onClick={onPrevious}>
                 Previous · To {getMessageTo(previousExperience)}
+              </button>
+            )}
+            {nextExperience && onNext && (
+              <button type="button" className="note-read__nav-btn" onClick={onNext}>
+                Next · To {getMessageTo(nextExperience)}
               </button>
             )}
           </nav>

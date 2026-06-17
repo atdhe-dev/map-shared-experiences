@@ -18,7 +18,7 @@ export interface EmotionColor {
 export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'red',
-    label: 'Love · intensity',
+    label: 'love',
     soft: '#f8d4d0',
     accent: '#9e4540',
     markerLight: '#f0b8b2',
@@ -28,7 +28,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'blue',
-    label: 'Sadness · distance',
+    label: 'sadness',
     soft: '#d4e4f0',
     accent: '#4a6888',
     markerLight: '#b8d4e8',
@@ -38,7 +38,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'yellow',
-    label: 'Warmth · hope',
+    label: 'warmth',
     soft: '#faf0b8',
     accent: '#8a7030',
     markerLight: '#f5e898',
@@ -48,7 +48,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'green',
-    label: 'Healing',
+    label: 'healing',
     soft: '#d8eed8',
     accent: '#4a7858',
     markerLight: '#b8dcb8',
@@ -58,7 +58,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'purple',
-    label: 'Nostalgia',
+    label: 'nostalgia',
     soft: '#e8dcf0',
     accent: '#685878',
     markerLight: '#d4c0e0',
@@ -68,7 +68,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'pink',
-    label: 'Tenderness',
+    label: 'tenderness',
     soft: '#f8dce8',
     accent: '#986878',
     markerLight: '#f0c0d4',
@@ -78,7 +78,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'orange',
-    label: 'Longing',
+    label: 'longing',
     soft: '#f8e8d0',
     accent: '#987040',
     markerLight: '#f0d4a8',
@@ -88,7 +88,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'black',
-    label: 'Grief · ending',
+    label: 'grief',
     soft: '#e0dcd8',
     accent: '#404040',
     markerLight: '#c8c4c0',
@@ -98,7 +98,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'white',
-    label: 'Peace',
+    label: 'peace',
     soft: '#f8f4ec',
     accent: '#888880',
     markerLight: '#f0ece0',
@@ -108,7 +108,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   },
   {
     id: 'gray',
-    label: 'Uncertainty',
+    label: 'uncertainty',
     soft: '#ece8e0',
     accent: '#686860',
     markerLight: '#d8d4cc',

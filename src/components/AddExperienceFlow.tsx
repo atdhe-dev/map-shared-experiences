@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { AuthorMode, LatLng } from '../types'
+import type { LatLng } from '../types'
 import { MAP_CENTER } from '../lib/constants'
 import { EMOTION_COLORS } from '../lib/emotionColors'
 import { MESSAGE_TYPES } from '../lib/messageTypes'
@@ -38,20 +38,19 @@ export function AddExperienceFlow({
 }: AddExperienceFlowProps) {
   const [step, setStep] = useState<AddStep>('write')
   const [messageTo, setMessageTo] = useState('')
-  const [title, setTitle] = useState('')
   const [story, setStory] = useState('')
   const [messageType, setMessageType] = useState('memory')
   const [emotionColor, setEmotionColor] = useState('gray')
   const [memoryDate, setMemoryDate] = useState('')
   const [locationName, setLocationName] = useState('')
-  const [authorMode, setAuthorMode] = useState<AuthorMode>('anonymous')
-  const [authorName, setAuthorName] = useState('')
   const [placeOpen, setPlaceOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const resolvedLocationName = locationName || initialLocationName
   const hasPlace = Boolean(confirmedLocation)
+  const charsLeft = Math.max(0, 500 - story.length)
+  const selectedColor = EMOTION_COLORS.find((c) => c.id === emotionColor)
 
   useEffect(() => {
     if (!selectMode && confirmedLocation) {
@@ -62,14 +61,11 @@ export function AddExperienceFlow({
   const reset = useCallback(() => {
     setStep('write')
     setMessageTo('')
-    setTitle('')
     setStory('')
     setMessageType('memory')
     setEmotionColor('gray')
     setMemoryDate('')
     setLocationName('')
-    setAuthorMode('anonymous')
-    setAuthorName('')
     setPlaceOpen(false)
     setError(null)
     onCancelLocation()
@@ -94,15 +90,11 @@ export function AddExperienceFlow({
 
   const validate = () => {
     if (!messageTo.trim()) {
-      setError('Who is this message to?')
+      setError('Who is this for?')
       return false
     }
-    if (!title.trim() || !story.trim()) {
-      setError('Add an opening line and your unsent message.')
-      return false
-    }
-    if (authorMode !== 'anonymous' && !authorName.trim()) {
-      setError('Add a name, or choose anonymous.')
+    if (!story.trim()) {
+      setError('Write what you never got to say.')
       return false
     }
     setError(null)
@@ -127,9 +119,11 @@ export function AddExperienceFlow({
         `${confirmedLocation.lat.toFixed(4)}, ${confirmedLocation.lng.toFixed(4)}`
       : null
 
+    const autoTitle = story.trim().slice(0, 80)
+
     try {
       await submitExperience({
-        title: title.trim(),
+        title: autoTitle,
         story: story.trim(),
         category: messageType,
         message_to: messageTo.trim(),
@@ -139,8 +133,8 @@ export function AddExperienceFlow({
         lng,
         location_name: placeName,
         image_url: null,
-        author_mode: authorMode,
-        author_name: authorMode === 'anonymous' ? null : authorName.trim(),
+        author_mode: 'anonymous',
+        author_name: null,
         memory_date: memoryDate || null,
         status: 'pending',
       })
@@ -178,126 +172,59 @@ export function AddExperienceFlow({
         Words for someone who never got them.
       </p>
 
-      <div>
-        <label className="share-flow-label" htmlFor="write-to">To</label>
+      <div className="write-prompt-group">
+        <label className="write-prompt-label" htmlFor="write-to">This is for</label>
         <input
           id="write-to"
           type="text"
           value={messageTo}
           onChange={(e) => setMessageTo(e.target.value)}
           maxLength={80}
-          placeholder="Mom, A., My younger self…"
+          placeholder="Mom, A., my younger self…"
           className={inputClass}
           required
           autoFocus
         />
       </div>
 
-      <div>
-        <label className="share-flow-label">From</label>
-        <div className="write-from-row">
-          {(['anonymous', 'nickname', 'real_name'] as AuthorMode[]).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              className={`write-from-chip${authorMode === mode ? ' write-from-chip--on' : ''}`}
-              onClick={() => setAuthorMode(mode)}
-            >
-              {mode === 'anonymous' ? 'Anonymous' : mode === 'nickname' ? 'Nickname' : 'My name'}
-            </button>
-          ))}
-        </div>
-        {authorMode !== 'anonymous' && (
-          <input
-            type="text"
-            value={authorName}
-            onChange={(e) => setAuthorName(e.target.value)}
-            placeholder={authorMode === 'nickname' ? 'How you want to sign' : 'Your name'}
-            className={`${inputClass} mt-2`}
-          />
-        )}
-      </div>
-
-      <div>
-        <label className="share-flow-label" htmlFor="write-hook">Opening line</label>
-        <input
-          id="write-hook"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          maxLength={120}
-          placeholder="The first line they would read"
-          className={inputClass}
-          required
-        />
-      </div>
-
-      <div>
-        <label className="share-flow-label" htmlFor="write-body">Your unsent message</label>
+      <div className="write-prompt-group">
+        <label className="write-prompt-label" htmlFor="write-body">You never got to hear this:</label>
         <textarea
           id="write-body"
           value={story}
           onChange={(e) => setStory(e.target.value)}
           rows={6}
-          maxLength={2000}
+          maxLength={500}
           placeholder="Write what you never got to say…"
           className={`${inputClass} resize-none leading-relaxed`}
           required
         />
+        <p className="write-char-hint">{charsLeft} left</p>
       </div>
 
-      <details className="write-more-options">
-        <summary className="write-more-options__summary">
-          <span>More options</span>
-          <ChevronDown size={16} aria-hidden />
-        </summary>
-        <div className="write-more-options__body space-y-4">
-          <div>
-            <label className="share-flow-label">Message type</label>
-            <div className="flex flex-wrap gap-2">
-              {MESSAGE_TYPES.map((type) => (
-                <button
-                  key={type.id}
-                  type="button"
-                  onClick={() => setMessageType(type.id)}
-                  className={`message-type-chip${messageType === type.id ? ' message-type-chip--active' : ''}`}
-                >
-                  {type.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="share-flow-label">Emotion color</label>
-            <div className="emotion-color-picker">
-              {EMOTION_COLORS.map((color) => (
-                <button
-                  key={color.id}
-                  type="button"
-                  title={color.label}
-                  aria-label={color.label}
-                  onClick={() => setEmotionColor(color.id)}
-                  className={`emotion-color-dot${emotionColor === color.id ? ' emotion-color-dot--active' : ''}`}
-                  style={{ '--emotion-accent': color.accent } as React.CSSProperties}
-                >
-                  <span className="emotion-color-dot__ring" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="share-flow-label">When (optional)</label>
-            <input
-              type="date"
-              value={memoryDate}
-              onChange={(e) => setMemoryDate(e.target.value)}
-              className={inputClass}
-            />
-          </div>
+      <div className="write-feeling-row">
+        <p className="write-feeling-label">
+          How does it feel?
+          {selectedColor && (
+            <span className="write-feeling-selected"> · {selectedColor.label}</span>
+          )}
+        </p>
+        <div className="emotion-color-picker">
+          {EMOTION_COLORS.map((color) => (
+            <button
+              key={color.id}
+              type="button"
+              title={color.label}
+              aria-label={color.label}
+              onClick={() => setEmotionColor(color.id)}
+              className={`emotion-color-dot${emotionColor === color.id ? ' emotion-color-dot--active' : ''}`}
+              style={{ '--emotion-accent': color.accent } as React.CSSProperties}
+            >
+              <span className="emotion-color-dot__ring" />
+            </button>
+          ))}
         </div>
-      </details>
+      </div>
 
       <div className="write-place-optional">
         <button
@@ -359,6 +286,40 @@ export function AddExperienceFlow({
         )}
       </div>
 
+      <details className="write-more-options">
+        <summary className="write-more-options__summary">
+          <span>More options</span>
+          <ChevronDown size={16} aria-hidden />
+        </summary>
+        <div className="write-more-options__body space-y-4">
+          <div>
+            <label className="share-flow-label">Message type</label>
+            <div className="flex flex-wrap gap-2">
+              {MESSAGE_TYPES.map((type) => (
+                <button
+                  key={type.id}
+                  type="button"
+                  onClick={() => setMessageType(type.id)}
+                  className={`message-type-chip${messageType === type.id ? ' message-type-chip--active' : ''}`}
+                >
+                  {type.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="share-flow-label">When (optional)</label>
+            <input
+              type="date"
+              value={memoryDate}
+              onChange={(e) => setMemoryDate(e.target.value)}
+              className={inputClass}
+            />
+          </div>
+        </div>
+      </details>
+
       <p className="write-flow-safety">
         Please do not include private phone numbers, addresses, or information that can harm someone.
       </p>
@@ -367,7 +328,7 @@ export function AddExperienceFlow({
 
       <div className="write-letter-form__submit">
         <Button type="submit" variant="warm" className="w-full" disabled={submitting}>
-          {submitting ? 'Saving…' : 'Pin to wall'}
+          {submitting ? 'Saving…' : 'Leave it'}
         </Button>
       </div>
     </form>
