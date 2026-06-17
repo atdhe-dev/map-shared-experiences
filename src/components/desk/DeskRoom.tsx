@@ -1,5 +1,5 @@
+import { Search, PenLine, Map as MapIcon } from 'lucide-react'
 import type { Experience } from '../../types'
-import { EMOTION_COLORS } from '../../lib/emotionColors'
 import { DeskLetterCard } from './DeskLetterCard'
 
 interface DeskRoomProps {
@@ -9,8 +9,9 @@ interface DeskRoomProps {
   error?: string | null
   emptyFiltered?: boolean
   emptyDesk?: boolean
-  activeColor?: string | null
-  onColorFilter?: (color: string | null) => void
+  onWrite?: () => void
+  onSearch?: () => void
+  onToggleView?: () => void
 }
 
 export function DeskRoom({
@@ -20,8 +21,9 @@ export function DeskRoom({
   error,
   emptyFiltered,
   emptyDesk,
-  activeColor,
-  onColorFilter,
+  onWrite,
+  onSearch,
+  onToggleView,
 }: DeskRoomProps) {
   return (
     <div className="wall" aria-label="Wall of unsent messages">
@@ -30,30 +32,40 @@ export function DeskRoom({
           <p className="wall__title">What If</p>
           <p className="wall__tagline">Words people never got to say</p>
         </div>
-      </header>
 
-      {onColorFilter && (
-        <div className="wall__feeling-filter" role="group" aria-label="Filter by feeling">
-          <button
-            type="button"
-            className={`wall__feeling-pill${activeColor === null ? ' wall__feeling-pill--active' : ''}`}
-            onClick={() => onColorFilter(null)}
-          >
-            all
-          </button>
-          {EMOTION_COLORS.map((color) => (
+        <div className="wall__header-actions">
+          {onSearch && (
             <button
-              key={color.id}
               type="button"
-              className={`wall__feeling-pill${activeColor === color.id ? ' wall__feeling-pill--active' : ''}`}
-              aria-pressed={activeColor === color.id}
-              onClick={() => onColorFilter(activeColor === color.id ? null : color.id)}
+              className="wall__hdr-icon"
+              onClick={onSearch}
+              aria-label="Search"
             >
-              {color.label}
+              <Search size={17} strokeWidth={2} aria-hidden />
             </button>
-          ))}
+          )}
+          {onWrite && (
+            <button
+              type="button"
+              className="wall__hdr-write"
+              onClick={onWrite}
+            >
+              <PenLine size={13} strokeWidth={2} aria-hidden />
+              Write
+            </button>
+          )}
+          {onToggleView && (
+            <button
+              type="button"
+              className="wall__hdr-icon"
+              onClick={onToggleView}
+              aria-label="Map"
+            >
+              <MapIcon size={17} strokeWidth={2} aria-hidden />
+            </button>
+          )}
         </div>
-      )}
+      </header>
 
       <div className="wall__board-wrap">
         {loading && <p className="wall__empty">Loading…</p>}
@@ -62,7 +74,7 @@ export function DeskRoom({
           <p className="wall__empty">No notes yet. Tap Write to add the first one.</p>
         )}
         {!loading && !error && emptyFiltered && (
-          <p className="wall__empty">No notes for that name{activeColor ? ' and feeling' : ''}.</p>
+          <p className="wall__empty">Nothing here yet.</p>
         )}
 
         {!loading && !error && experiences.length > 0 && (

@@ -164,7 +164,7 @@ body:has(.app-viewport--map)::after {
 .wall {
   min-height: 100dvh;
   min-height: 100svh;
-  padding-bottom: var(--app-clearance);
+  padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
   color: var(--app-text);
   font-family: var(--app-font);
 }
@@ -174,12 +174,10 @@ body:has(.app-viewport--map)::after {
   top: 0;
   z-index: 10;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: max(16px, env(safe-area-inset-top)) 20px 14px;
-  padding-left: max(20px, env(safe-area-inset-left));
-  padding-right: max(20px, env(safe-area-inset-right));
+  padding: max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 14px max(16px, env(safe-area-inset-left));
   background: rgba(247, 244, 238, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -192,9 +190,9 @@ body:has(.app-viewport--map)::after {
 }
 
 .wall__title {
-  margin: 0 0 1px;
+  margin: 0;
   font-family: var(--app-serif);
-  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  font-size: clamp(1.375rem, 5vw, 1.75rem);
   font-weight: 600;
   font-style: italic;
   letter-spacing: -0.03em;
@@ -203,11 +201,60 @@ body:has(.app-viewport--map)::after {
 }
 
 .wall__tagline {
-  margin: 0;
-  font-size: 0.75rem;
+  margin: 2px 0 0;
+  font-size: 0.6875rem;
   letter-spacing: 0.01em;
-  line-height: 1.4;
+  line-height: 1.3;
   color: var(--app-text-tertiary);
+}
+
+.wall__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.wall__hdr-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.wall__hdr-icon:active {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--app-text);
+}
+
+.wall__hdr-write {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px 0 12px;
+  border: none;
+  border-radius: 999px;
+  background: var(--app-text);
+  color: #ffffff;
+  font-family: var(--app-font);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s ease;
+}
+
+.wall__hdr-write:active {
+  opacity: 0.8;
 }
 
 .wall__board-wrap {

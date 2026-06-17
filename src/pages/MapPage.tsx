@@ -340,8 +340,9 @@ export function MapPage() {
             error={error}
             emptyFiltered={emptyFiltered}
             emptyDesk={emptyDesk}
-            activeColor={filters.emotionColor}
-            onColorFilter={(color) => setFilters((f) => ({ ...f, emotionColor: color }))}
+            onWrite={handleStartAdd}
+            onSearch={toggleExplore}
+            onToggleView={toggleViewMode}
           />
         )}
 
@@ -396,8 +397,8 @@ export function MapPage() {
         />
 
         <HomeHud
-          hidden={chromeHidden}
-          viewMode={showMap ? 'map' : 'desk'}
+          hidden={chromeHidden || !showMap}
+          viewMode="map"
           exploreOpen={panel === 'explore'}
           onExplore={toggleExplore}
           onWrite={handleStartAdd}
