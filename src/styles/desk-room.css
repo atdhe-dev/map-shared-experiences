@@ -395,26 +395,28 @@ body:has(.app-viewport--map)::after {
   position: relative;
   width: 100%;
   max-width: min(420px, calc(100vw - 32px));
-  margin: 0;
+  margin: 8px 0 0;
   padding: 36px 24px 28px;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 10px;
   background: var(--note-color, #fdf8e8);
   color: var(--note-ink, var(--app-text));
   box-shadow: var(--app-shadow-lg);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .letter-sheet__pin {
   position: absolute;
-  top: -6px;
+  top: -8px;
   left: 50%;
+  z-index: 2;
   transform: translateX(-50%);
   width: 12px;
   height: 12px;
   border-radius: 50%;
   background: linear-gradient(145deg, #e8a0a0 0%, #c97070 100%);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
 }
 
 .letter-sheet__pin::after {
@@ -618,7 +620,8 @@ body:has(.app-viewport--map)::after {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  padding: 20px 16px max(32px, env(safe-area-inset-bottom));
+  padding: 28px 16px max(32px, env(safe-area-inset-bottom));
+  overflow: visible;
 }
 
 .note-read__opening {
