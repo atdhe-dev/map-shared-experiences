@@ -1,11 +1,13 @@
 import { useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
+import { MapPin } from 'lucide-react'
 import L from 'leaflet'
 
 interface NoteLocationMapProps {
   lat: number
   lng: number
   locationName?: string | null
+  onViewOnMap?: () => void
 }
 
 function Recenter({ lat, lng }: { lat: number; lng: number }) {
@@ -23,7 +25,7 @@ const pinIcon = L.divIcon({
   iconAnchor: [7, 7],
 })
 
-export function NoteLocationMap({ lat, lng, locationName }: NoteLocationMapProps) {
+export function NoteLocationMap({ lat, lng, locationName, onViewOnMap }: NoteLocationMapProps) {
   return (
     <section className="note-location-map" aria-label="Where this was written">
       <p className="note-location-map__label">
@@ -36,7 +38,11 @@ export function NoteLocationMap({ lat, lng, locationName }: NoteLocationMapProps
           minZoom={10}
           maxZoom={16}
           scrollWheelZoom={false}
-          dragging
+          dragging={false}
+          doubleClickZoom={false}
+          touchZoom={false}
+          boxZoom={false}
+          keyboard={false}
           zoomControl={false}
           attributionControl={false}
           className="note-location-map__map"
@@ -46,6 +52,12 @@ export function NoteLocationMap({ lat, lng, locationName }: NoteLocationMapProps
           <Recenter lat={lat} lng={lng} />
         </MapContainer>
       </div>
+      {onViewOnMap && (
+        <button type="button" className="note-location-map__view-btn" onClick={onViewOnMap}>
+          <MapPin size={16} strokeWidth={2} aria-hidden />
+          View on map
+        </button>
+      )}
     </section>
   )
 }

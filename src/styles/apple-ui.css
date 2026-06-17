@@ -309,6 +309,45 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+.note-location-map__view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 10px 16px;
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: var(--app-surface);
+  font-family: var(--app-font);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--app-accent);
+  cursor: pointer;
+  box-shadow: var(--app-shadow-sm);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 0.15s ease;
+}
+
+.note-location-map__view-btn:active {
+  background: var(--app-elevated);
+}
+
+.letter-sheet .note-location-map__label {
+  color: var(--app-text-tertiary);
+}
+
+.letter-sheet .note-location-map {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+.letter-sheet .note-location-map__view-btn {
+  background: rgba(255, 255, 255, 0.65);
+}
+
 /* ─── Main map: small dots only, no photo blow-up ─── */
 .app-viewport--map .leaflet-container {
   height: 100% !important;

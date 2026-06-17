@@ -207,8 +207,10 @@ export function MapPage() {
     if (panel === 'detail') closeStoryPanel()
   }
 
-  const openMap = () => {
+  const handleViewOnMap = (exp: Experience) => {
+    closeStoryPanel()
     setViewMode('map')
+    setFlyTo({ lat: exp.lat, lng: exp.lng })
   }
 
   const handleLetterTap = (exp: Experience) => {
@@ -337,6 +339,7 @@ export function MapPage() {
             : undefined,
         onReact: handleReact,
         onReport: handleReport,
+        onViewOnMap: () => handleViewOnMap(selectedExperience),
         reacting,
         reporting,
         reactionCount:
@@ -355,7 +358,6 @@ export function MapPage() {
           <DeskRoom
             experiences={filteredExperiences}
             onRead={handleLetterTap}
-            onOpenMap={openMap}
             loading={loading}
             error={error}
             emptyFiltered={emptyFiltered}

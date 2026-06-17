@@ -4,7 +4,6 @@ import { DeskLetterCard } from './DeskLetterCard'
 interface DeskRoomProps {
   experiences: Experience[]
   onRead: (experience: Experience) => void
-  onOpenMap: () => void
   loading?: boolean
   error?: string | null
   emptyFiltered?: boolean
@@ -14,7 +13,6 @@ interface DeskRoomProps {
 export function DeskRoom({
   experiences,
   onRead,
-  onOpenMap,
   loading,
   error,
   emptyFiltered,
@@ -27,9 +25,6 @@ export function DeskRoom({
           <h1 className="wall__title">unsent</h1>
           <p className="wall__tagline">Words people never got to say</p>
         </div>
-        <button type="button" className="wall__map-btn" onClick={onOpenMap}>
-          Map
-        </button>
       </header>
 
       <div className="wall__board-wrap">

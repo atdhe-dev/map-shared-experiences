@@ -209,26 +209,6 @@ body:has(.app-viewport--map)::after {
   color: var(--app-text-secondary);
 }
 
-.wall__map-btn {
-  flex-shrink: 0;
-  min-height: var(--app-touch);
-  padding: 0 16px;
-  border: 1px solid var(--app-border);
-  border-radius: 999px;
-  background: var(--app-surface);
-  font-family: var(--app-font);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--app-accent);
-  cursor: pointer;
-  box-shadow: var(--app-shadow-sm);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.wall__map-btn:active {
-  transform: scale(0.97);
-}
-
 .wall__board-wrap {
   padding: 16px 12px 8px;
   padding-left: max(12px, env(safe-area-inset-left));

@@ -25,6 +25,7 @@ interface LetterReadViewProps {
   onPrevious?: () => void
   onReact: (id: string) => void
   onReport?: (id: string) => void
+  onViewOnMap?: () => void
   reacting: boolean
   reporting?: boolean
   reactionCount: number
@@ -43,6 +44,7 @@ export function LetterReadView({
   onPrevious,
   onReact,
   onReport,
+  onViewOnMap,
   reacting,
   reporting,
   reactionCount,
@@ -101,6 +103,7 @@ export function LetterReadView({
               lat={experience.lat}
               lng={experience.lng}
               locationName={experience.location_name}
+              onViewOnMap={onViewOnMap}
             />
           )}
 
