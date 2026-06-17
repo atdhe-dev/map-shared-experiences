@@ -49,7 +49,7 @@ export function AddExperienceFlow({
 
   const resolvedLocationName = locationName || initialLocationName
   const hasPlace = Boolean(confirmedLocation)
-  const charsLeft = Math.max(0, 500 - story.length)
+  const charsLeft = Math.max(0, 100 - story.length)
   const selectedColor = EMOTION_COLORS.find((c) => c.id === emotionColor)
 
   useEffect(() => {
@@ -124,7 +124,7 @@ export function AddExperienceFlow({
     try {
       await submitExperience({
         title: autoTitle,
-        story: story.trim(),
+        story: story.trim().slice(0, 100),
         category: messageType,
         message_to: messageTo.trim(),
         message_type: messageType,
@@ -193,8 +193,8 @@ export function AddExperienceFlow({
           id="write-body"
           value={story}
           onChange={(e) => setStory(e.target.value)}
-          rows={6}
-          maxLength={500}
+          rows={4}
+          maxLength={100}
           placeholder="Write what you never got to say…"
           className={`${inputClass} resize-none leading-relaxed`}
           required
