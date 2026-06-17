@@ -1,22 +1,22 @@
-/* ─── Premium mobile-first: light wall + sticky notes ─── */
+/* ─── What If — clean paper wall ─── */
 
 :root {
-  --app-bg: #f5f4f1;
+  --app-bg: #F7F4EE;
   --app-surface: #ffffff;
-  --app-elevated: #fafaf8;
+  --app-elevated: #fdfcfa;
   --app-border: rgba(0, 0, 0, 0.07);
-  --app-text: #1c1c1e;
-  --app-text-secondary: #636366;
-  --app-text-tertiary: #aeaeb2;
+  --app-text: #1a1a1c;
+  --app-text-secondary: #6b6b6e;
+  --app-text-tertiary: #adadb0;
   --app-accent: #5b7c99;
   --app-accent-soft: #e8eef3;
-  --app-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.10);
-  --app-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.14);
-  --app-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.18);
+  --app-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
+  --app-shadow-md: 0 3px 14px rgba(0, 0, 0, 0.09);
+  --app-shadow-lg: 0 10px 36px rgba(0, 0, 0, 0.13);
   --app-font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --app-serif: 'Fraunces', Georgia, serif;
-  --app-nav-h: 56px;
-  --app-clearance: calc(var(--app-nav-h) + max(8px, env(safe-area-inset-bottom, 0px)) + 12px);
+  --app-nav-h: 62px;
+  --app-clearance: calc(var(--app-nav-h) + max(10px, env(safe-area-inset-bottom, 0px)) + 10px);
   --app-touch: 44px;
 }
 
@@ -56,12 +56,8 @@ body:has(.app-viewport--map) {
 
 body:has(.app-viewport--desk),
 body:has(.app-viewport--map) {
-  background-color: #e2ddd6 !important;
-  background-image:
-    radial-gradient(ellipse 100% 50% at 50% -5%, rgba(255, 255, 255, 0.55) 0%, transparent 70%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='80'%3E%3Crect width='160' height='80' fill='%23d6d1c9'/%3E%3Crect x='0' y='0' width='76' height='36' fill='%23ebe7e1'/%3E%3Crect x='80' y='0' width='76' height='36' fill='%23ebe7e1'/%3E%3Crect x='0' y='40' width='36' height='36' fill='%23ebe7e1'/%3E%3Crect x='40' y='40' width='76' height='36' fill='%23ebe7e1'/%3E%3Crect x='120' y='40' width='40' height='36' fill='%23ebe7e1'/%3E%3C/svg%3E") !important;
-  background-size: auto, 160px 80px !important;
-  background-repeat: no-repeat, repeat !important;
+  background: var(--app-bg) !important;
+  background-image: none !important;
 }
 
 body:has(.app-viewport--desk)::before,
@@ -178,16 +174,16 @@ body:has(.app-viewport--map)::after {
   top: 0;
   z-index: 10;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  padding: max(12px, env(safe-area-inset-top)) 16px 16px;
-  padding-left: max(16px, env(safe-area-inset-left));
-  padding-right: max(16px, env(safe-area-inset-right));
-  background: rgba(235, 231, 225, 0.90);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  padding: max(16px, env(safe-area-inset-top)) 20px 14px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+  background: rgba(247, 244, 238, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 .wall__header-text {
@@ -196,19 +192,22 @@ body:has(.app-viewport--map)::after {
 }
 
 .wall__title {
-  margin: 0 0 2px;
+  margin: 0 0 1px;
   font-family: var(--app-serif);
-  font-size: 1.375rem;
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  font-style: italic;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   color: var(--app-text);
 }
 
 .wall__tagline {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
   line-height: 1.4;
-  color: var(--app-text-secondary);
+  color: var(--app-text-tertiary);
 }
 
 .wall__board-wrap {
@@ -249,20 +248,94 @@ body:has(.app-viewport--map)::after {
 .wall__slot {
   display: flex;
   min-width: 0;
-  padding-top: 8px;
 }
 
 .wall__empty {
-  margin: 40px auto;
-  max-width: 280px;
+  margin: 48px auto;
+  max-width: 260px;
   padding: 0 16px;
   text-align: center;
   font-size: 0.9375rem;
   line-height: 1.55;
-  color: var(--app-text-secondary);
+  color: var(--app-text-tertiary);
 }
 
-/* ─── Sticky notes — premium squares ─── */
+/* ─── Letter cards — Direction B clean ─── */
+.letter-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  aspect-ratio: 1 / 1.08;
+  padding: 18px 16px 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--card-bg, #F2EEE6);
+  color: var(--app-text);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 14px rgba(0, 0, 0, 0.07);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (hover: hover) {
+  .letter-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.07),
+      0 10px 28px rgba(0, 0, 0, 0.11);
+  }
+}
+
+.letter-card:active {
+  transform: scale(0.97);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 3px 10px rgba(0, 0, 0, 0.07);
+}
+
+.letter-card__to {
+  display: block;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--app-text-tertiary);
+  margin-bottom: 6px;
+}
+
+.letter-card__name {
+  display: -webkit-box;
+  font-family: var(--app-serif);
+  font-size: clamp(1rem, 4.2vw, 1.125rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--app-text);
+  margin-bottom: 10px;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.letter-card__text {
+  display: -webkit-box;
+  font-family: var(--app-serif);
+  font-size: 0.6875rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--app-text-secondary);
+  overflow: hidden;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+/* ─── Sticky notes — kept for read view ─── */
 .sticky-note {
   position: relative;
   display: flex;
@@ -585,10 +658,10 @@ body:has(.app-viewport--map)::after {
   padding: max(10px, env(safe-area-inset-top)) 16px 10px;
   padding-left: max(16px, env(safe-area-inset-left));
   padding-right: max(16px, env(safe-area-inset-right));
-  background: rgba(235, 231, 225, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  background: rgba(247, 244, 238, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 .note-read__back {
@@ -709,66 +782,46 @@ body:has(.app-viewport--map)::after {
   background: var(--app-elevated);
 }
 
-/* ─── Emotion color filter strip ─── */
-.wall__color-filter {
+/* ─── Feeling filter — text pills ─── */
+.wall__feeling-filter {
   display: flex;
-  align-items: flex-start;
-  gap: 2px;
+  align-items: center;
+  gap: 6px;
   overflow-x: auto;
-  padding: 10px max(16px, env(safe-area-inset-left)) 12px max(16px, env(safe-area-inset-left));
+  padding: 10px max(20px, env(safe-area-inset-left)) 11px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   border-bottom: 1px solid var(--app-border);
 }
 
-.wall__color-filter::-webkit-scrollbar {
+.wall__feeling-filter::-webkit-scrollbar {
   display: none;
 }
 
-.wall__color-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
+.wall__feeling-pill {
   flex-shrink: 0;
-  min-width: 48px;
-  padding: 6px 8px;
-  border-radius: 16px;
-  border: 1.5px solid transparent;
-  background: none;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+  font-family: var(--app-font);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--app-text-secondary);
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.wall__color-btn--active {
-  background: var(--app-accent-soft);
-  border-color: var(--app-accent);
-}
-
-.wall__color-swatch {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
-  flex-shrink: 0;
-  transition: transform 0.15s ease;
-}
-
-.wall__color-btn:active .wall__color-swatch {
-  transform: scale(0.9);
-}
-
-.wall__color-label {
-  font-size: 0.5rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--app-text-tertiary);
   white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.wall__color-btn--active .wall__color-label {
-  color: var(--app-accent);
+.wall__feeling-pill--active {
+  background: var(--app-text);
+  border-color: var(--app-text);
+  color: #ffffff;
+}
+
+.wall__feeling-pill:not(.wall__feeling-pill--active):active {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* ─── Letter reaction seal ─── */

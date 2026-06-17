@@ -27,28 +27,29 @@ export function DeskRoom({
     <div className="wall" aria-label="Wall of unsent messages">
       <header className="wall__header">
         <div className="wall__header-text">
-          <p className="wall__title">unsent</p>
+          <p className="wall__title">What If</p>
           <p className="wall__tagline">Words people never got to say</p>
         </div>
       </header>
 
       {onColorFilter && (
-        <div className="wall__color-filter" role="group" aria-label="Filter by feeling">
+        <div className="wall__feeling-filter" role="group" aria-label="Filter by feeling">
+          <button
+            type="button"
+            className={`wall__feeling-pill${activeColor === null ? ' wall__feeling-pill--active' : ''}`}
+            onClick={() => onColorFilter(null)}
+          >
+            all
+          </button>
           {EMOTION_COLORS.map((color) => (
             <button
               key={color.id}
               type="button"
-              className={`wall__color-btn${activeColor === color.id ? ' wall__color-btn--active' : ''}`}
+              className={`wall__feeling-pill${activeColor === color.id ? ' wall__feeling-pill--active' : ''}`}
               aria-pressed={activeColor === color.id}
               onClick={() => onColorFilter(activeColor === color.id ? null : color.id)}
-              title={color.label}
             >
-              <span
-                className="wall__color-swatch"
-                style={{ background: color.accent }}
-                aria-hidden
-              />
-              <span className="wall__color-label">{color.label}</span>
+              {color.label}
             </button>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import { Search, SquarePen, Map as MapIcon } from 'lucide-react'
+import { Search, PenLine, Map as MapIcon } from 'lucide-react'
 
 export type AppViewMode = 'desk' | 'map'
 
@@ -24,22 +24,28 @@ export function HomeHud({
   const isDesk = viewMode === 'desk'
 
   return (
-    <nav className="apple-tab-bar" aria-label="Navigation">
+    <nav className="wall-hud" aria-label="Navigation">
       <button
         type="button"
-        className={`apple-tab-bar__item${exploreOpen ? ' apple-tab-bar__item--active' : ''}`}
+        className={`wall-hud__icon-btn${exploreOpen ? ' wall-hud__icon-btn--active' : ''}`}
         onClick={onExplore}
+        aria-label="Search"
       >
-        <Search size={20} strokeWidth={2} aria-hidden />
-        <span className="apple-tab-bar__label">Search</span>
+        <Search size={18} strokeWidth={2} aria-hidden />
       </button>
-      <button type="button" className="apple-tab-bar__item apple-tab-bar__item--primary" onClick={onWrite}>
-        <SquarePen size={20} strokeWidth={2} aria-hidden />
-        <span className="apple-tab-bar__label">Write</span>
+
+      <button type="button" className="wall-hud__write-btn" onClick={onWrite}>
+        <PenLine size={16} strokeWidth={2} aria-hidden />
+        <span>Write</span>
       </button>
-      <button type="button" className="apple-tab-bar__item" onClick={onToggleView}>
-        <MapIcon size={20} strokeWidth={2} aria-hidden />
-        <span className="apple-tab-bar__label">{isDesk ? 'Map' : 'Wall'}</span>
+
+      <button
+        type="button"
+        className="wall-hud__icon-btn"
+        onClick={onToggleView}
+        aria-label={isDesk ? 'Map' : 'Wall'}
+      >
+        <MapIcon size={18} strokeWidth={2} aria-hidden />
       </button>
     </nav>
   )

@@ -19,7 +19,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'red',
     label: 'love',
-    soft: '#f8d4d0',
+    soft: '#EDD9D5',
     accent: '#9e4540',
     markerLight: '#f0b8b2',
     marker: '#e8a098',
@@ -29,7 +29,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'blue',
     label: 'sadness',
-    soft: '#d4e4f0',
+    soft: '#D8E8F0',
     accent: '#4a6888',
     markerLight: '#b8d4e8',
     marker: '#9ec0dc',
@@ -39,7 +39,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'yellow',
     label: 'warmth',
-    soft: '#faf0b8',
+    soft: '#F0E9D3',
     accent: '#8a7030',
     markerLight: '#f5e898',
     marker: '#ede080',
@@ -49,7 +49,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'green',
     label: 'healing',
-    soft: '#d8eed8',
+    soft: '#D8EDD9',
     accent: '#4a7858',
     markerLight: '#b8dcb8',
     marker: '#a0d0a0',
@@ -59,7 +59,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'purple',
     label: 'nostalgia',
-    soft: '#e8dcf0',
+    soft: '#E5DFEE',
     accent: '#685878',
     markerLight: '#d4c0e0',
     marker: '#c4acd8',
@@ -69,7 +69,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'pink',
     label: 'tenderness',
-    soft: '#f8dce8',
+    soft: '#EEE0E9',
     accent: '#986878',
     markerLight: '#f0c0d4',
     marker: '#e8a8c0',
@@ -79,7 +79,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'orange',
     label: 'longing',
-    soft: '#f8e8d0',
+    soft: '#EDE5D4',
     accent: '#987040',
     markerLight: '#f0d4a8',
     marker: '#e8c088',
@@ -89,7 +89,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'black',
     label: 'grief',
-    soft: '#e0dcd8',
+    soft: '#E8E4DF',
     accent: '#404040',
     markerLight: '#c8c4c0',
     marker: '#b0aca8',
@@ -99,7 +99,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'white',
     label: 'peace',
-    soft: '#f8f4ec',
+    soft: '#F2EEE6',
     accent: '#888880',
     markerLight: '#f0ece0',
     marker: '#e8e4d8',
@@ -109,7 +109,7 @@ export const EMOTION_COLORS: EmotionColor[] = [
   {
     id: 'gray',
     label: 'uncertainty',
-    soft: '#ece8e0',
+    soft: '#ECEAE6',
     accent: '#686860',
     markerLight: '#d8d4cc',
     marker: '#c8c4bc',

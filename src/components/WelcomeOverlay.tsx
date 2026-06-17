@@ -20,7 +20,7 @@ export function WelcomeOverlay({ onShare, onActiveChange }: WelcomeOverlayProps)
   return (
     <div className="welcome-diary" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
       <div className="welcome-diary__inner">
-        <p className="welcome-diary__eyebrow">unsent</p>
+        <p className="welcome-diary__eyebrow">What If</p>
         <h2 id="welcome-title" className="welcome-diary__mark">
           Words people never got to say
         </h2>

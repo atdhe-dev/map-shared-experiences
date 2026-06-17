@@ -15,15 +15,14 @@ export function DeskLetterCard({ experience, index, onClick }: DeskLetterCardPro
   return (
     <button
       type="button"
-      className="sticky-note"
+      className="letter-card"
       onClick={() => onClick(experience)}
       aria-label={`Message to ${messageTo}`}
       style={getStickyNoteStyle(experience, index)}
     >
-      <span className="sticky-note__pin" aria-hidden />
-      <span className="sticky-note__to">To:</span>
-      <span className="sticky-note__name">{messageTo}</span>
-      <span className="sticky-note__text">&ldquo;{truncateText(experience.story, 72)}&rdquo;</span>
+      <span className="letter-card__to">to:</span>
+      <span className="letter-card__name">{messageTo}</span>
+      <span className="letter-card__text">{truncateText(experience.story, 90)}</span>
     </button>
   )
 }
