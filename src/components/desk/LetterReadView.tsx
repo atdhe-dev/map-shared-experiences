@@ -5,6 +5,7 @@ import { getMessageTo } from '../../lib/messageHelpers'
 import { getStickyNoteStyle } from '../../lib/stickyNoteVariants'
 import { hasExperienceLocation } from '../../lib/experienceLocation'
 import { NoteLocationMap } from './NoteLocationMap'
+import { NearbyLetters } from './NearbyLetters'
 
 function formatExactDate(experience: Experience): string {
   const when = experience.memory_date || experience.created_at
@@ -18,9 +19,11 @@ interface LetterReadViewProps {
   pageTotal?: number
   nextExperience?: Experience | null
   previousExperience?: Experience | null
+  nearbyExperiences?: Experience[]
   onClose: () => void
   onNext?: () => void
   onPrevious?: () => void
+  onRead?: (experience: Experience) => void
   onReact: (id: string) => void
   onViewOnMap?: () => void
   reacting: boolean
@@ -33,9 +36,11 @@ export function LetterReadView({
   experience,
   nextExperience,
   previousExperience,
+  nearbyExperiences,
   onClose,
   onNext,
   onPrevious,
+  onRead,
   onReact,
   onViewOnMap,
   reacting,
@@ -53,14 +58,31 @@ export function LetterReadView({
   }, [experience.id])
 
   return (
-    <div ref={pageRef} className="note-read" role="article" aria-labelledby="note-read-name">
+    <div
+      ref={pageRef}
+      className={`note-read${showPlace ? ' note-read--with-map' : ''}`}
+      role="article"
+      aria-labelledby="note-read-name"
+    >
       <header className="note-read__top">
         <button type="button" className="note-read__back" onClick={onClose}>
           Done
         </button>
       </header>
 
-      <div className="note-read__stage">
+      {/* Hero map — full-width at the top */}
+      {showPlace && (
+        <div className="note-read__hero-map">
+          <NoteLocationMap
+            lat={experience.lat}
+            lng={experience.lng}
+            locationName={experience.location_name}
+            onViewOnMap={onViewOnMap}
+          />
+        </div>
+      )}
+
+      <div className="note-read__content">
         <article
           className="letter-sheet"
           style={getStickyNoteStyle(experience, noteIndex)}
@@ -79,15 +101,6 @@ export function LetterReadView({
               <p key={i}>{para}</p>
             ))}
           </div>
-
-          {showPlace && (
-            <NoteLocationMap
-              lat={experience.lat}
-              lng={experience.lng}
-              locationName={experience.location_name}
-              onViewOnMap={onViewOnMap}
-            />
-          )}
 
           <footer className="letter-sheet__foot">
             <p className="letter-sheet__meta">{formatExactDate(experience)}</p>
@@ -113,6 +126,10 @@ export function LetterReadView({
             </div>
 
             {reactionError && <p className="letter-sheet__error">{reactionError}</p>}
+
+            {nearbyExperiences && nearbyExperiences.length > 0 && onRead && (
+              <NearbyLetters experiences={nearbyExperiences} onRead={onRead} />
+            )}
           </footer>
         </article>
 

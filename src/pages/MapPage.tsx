@@ -16,6 +16,7 @@ import { HomeHud, type AppViewMode } from '../components/layout/HomeHud'
 import { ExploreFloat } from '../components/layout/ExploreFloat'
 import { DeskRoom } from '../components/desk/DeskRoom'
 import { LetterReadView } from '../components/desk/LetterReadView'
+import { getNearby } from '../components/desk/NearbyLetters'
 import { AddExperienceFlow } from '../components/AddExperienceFlow'
 import { BottomSheet } from '../components/ui/BottomSheet'
 import { Modal } from '../components/ui/Modal'
@@ -308,7 +309,9 @@ export function MapPage() {
             : null,
         previousExperience:
           selectedIndex > 0 ? filteredExperiences[selectedIndex - 1] : null,
+        nearbyExperiences: getNearby(filteredExperiences, selectedExperience),
         onClose: closeStoryPanel,
+        onRead: handleLetterTap,
         onNext:
           selectedIndex >= 0 && selectedIndex < filteredExperiences.length - 1
             ? () => handleOpenAdjacent(filteredExperiences[selectedIndex + 1])

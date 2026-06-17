@@ -1,6 +1,6 @@
 import { Search, PenLine, Map as MapIcon, X } from 'lucide-react'
 import type { Experience } from '../../types'
-import { DeskLetterCard } from './DeskLetterCard'
+import { PlaceCard } from './PlaceCard'
 
 interface DeskRoomProps {
   experiences: Experience[]
@@ -100,9 +100,9 @@ export function DeskRoom({
 
         {!loading && !error && experiences.length > 0 && (
           <div className="wall__board" role="list">
-            {experiences.map((exp, i) => (
+            {experiences.map((exp) => (
               <div key={exp.id} className="wall__slot" role="listitem">
-                <DeskLetterCard experience={exp} index={i} onClick={onRead} />
+                <PlaceCard experience={exp} onClick={onRead} />
               </div>
             ))}
           </div>
