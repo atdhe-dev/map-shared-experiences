@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "seed:demo": "node scripts/seed-demo.mjs",
     "seed:photos": "node scripts/seed-demo.mjs photos",
+    "seed:letters": "node scripts/apply-macedonia-letters.mjs",
     "test:api": "node scripts/test-api.mjs"
   },
   "dependencies": {

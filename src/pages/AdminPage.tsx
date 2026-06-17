@@ -10,6 +10,7 @@ import {
   deleteExperience,
 } from '../lib/experiences'
 import { getCategory } from '../lib/categories'
+import { getMessageTo, getResolvedMessageType, getResolvedEmotionColor } from '../lib/messageHelpers'
 import { formatDate, getAuthorDisplay, truncateText } from '../lib/format'
 import { Button } from '../components/ui/Button'
 import { CategoryChip } from '../components/ui/CategoryChip'
@@ -162,14 +163,14 @@ export function AdminPage() {
   }
 
   const handleApprove = (id: string) =>
-    runAction(id, 'approve', () => updateExperienceStatus(id, 'approved'), 'Experience approved — it will appear on the public map.')
+    runAction(id, 'approve', () => updateExperienceStatus(id, 'approved'), 'Message approved — it will appear on the public map.')
 
   const handleReject = (id: string) =>
-    runAction(id, 'reject', () => updateExperienceStatus(id, 'rejected'), 'Experience rejected.')
+    runAction(id, 'reject', () => updateExperienceStatus(id, 'rejected'), 'Message rejected.')
 
   const handleDelete = (id: string) => {
-    if (!confirm('Delete this experience permanently?')) return
-    runAction(id, 'delete', () => deleteExperience(id), 'Experience deleted.')
+    if (!confirm('Delete this message permanently?')) return
+    runAction(id, 'delete', () => deleteExperience(id), 'Message deleted.')
   }
 
   if (checking) {
@@ -197,7 +198,7 @@ export function AdminPage() {
             Back to map
           </Link>
           <h1 className="font-display text-2xl font-medium text-charcoal mb-2">Admin</h1>
-          <p className="text-sm text-stone mb-6">Sign in to moderate shared memories.</p>
+          <p className="text-sm text-stone mb-6">Sign in to moderate unsent messages.</p>
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="email"
@@ -281,7 +282,7 @@ export function AdminPage() {
             variant={tab === 'all' ? 'primary' : 'secondary'}
             onClick={() => setTab('all')}
           >
-            All experiences
+            All messages
           </Button>
           <Button size="sm" variant="ghost" onClick={loadExperiences} disabled={loading}>
             Refresh
@@ -296,20 +297,23 @@ export function AdminPage() {
         )}
 
         {loading ? (
-          <LoadingSpinner message="Loading experiences…" />
+          <LoadingSpinner message="Loading messages…" />
         ) : experiences.length === 0 ? (
           <EmptyState
-            title={tab === 'pending' ? 'All caught up' : 'No experiences yet'}
+            title={tab === 'pending' ? 'All caught up' : 'No messages yet'}
             message={
               tab === 'pending'
-                ? 'No experiences waiting for approval.'
-                : 'No experiences in the database.'
+                ? 'No messages waiting for approval.'
+                : 'No messages in the database.'
             }
           />
         ) : (
           <ul className="space-y-4 pb-4">
             {experiences.map((exp) => {
               const cat = getCategory(exp.category)
+              const msgType = getResolvedMessageType(exp)
+              const emotion = getResolvedEmotionColor(exp)
+              const messageTo = getMessageTo(exp)
               const isExpanded = expandedId === exp.id
               const isBusy = busyId === exp.id
 
@@ -317,7 +321,13 @@ export function AdminPage() {
                 <li key={exp.id} className="glass-strong rounded-sm p-4 sm:p-5 border border-stone-light/50">
                   <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <CategoryChip categoryId={cat.id} label={cat.label} size="sm" />
+                      <CategoryChip categoryId={cat.id} label={msgType.label} size="sm" />
+                      <span
+                        className="text-xs font-medium px-2.5 py-0.5 rounded-full"
+                        style={{ backgroundColor: emotion.soft, color: emotion.deep }}
+                      >
+                        {emotion.label}
+                      </span>
                       <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusClass(exp.status)}`}>
                         {exp.status}
                       </span>
@@ -327,9 +337,18 @@ export function AdminPage() {
                           Photo
                         </span>
                       )}
+                      {exp.reports_count > 0 && (
+                        <span className="text-xs text-charcoal-soft font-medium">
+                          {exp.reports_count} report{exp.reports_count === 1 ? '' : 's'}
+                        </span>
+                      )}
                     </div>
                     <span className="text-xs text-stone shrink-0">{formatDate(exp.created_at)}</span>
                   </div>
+
+                  <p className="text-sm font-semibold text-charcoal mb-1 break-words">
+                    To: {messageTo}
+                  </p>
 
                   {exp.location_name && (
                     <p className="flex items-center gap-1.5 text-xs text-stone mb-2 break-words">
@@ -349,7 +368,7 @@ export function AdminPage() {
                       className="text-xs text-stone hover:text-charcoal mb-3 underline underline-offset-2 transition-colors"
                       onClick={() => setExpandedId(isExpanded ? null : exp.id)}
                     >
-                      {isExpanded ? 'Show less' : 'Read full story'}
+                      {isExpanded ? 'Show less' : 'Read full message'}
                     </button>
                   )}
 

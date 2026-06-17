@@ -1,126 +1,111 @@
--- Demo experiences for Shared Experiences MK
--- Safe fictional stories for testing. Run in Supabase SQL Editor or: npm run seed:demo
+-- Demo unsent letters for North Macedonia (Macedonian & Albanian names)
+-- Run in Supabase SQL Editor or: npm run seed:demo
 -- Skips insert if demo data already exists.
--- Photos: real North Macedonia locations via Wikimedia Commons (CC / public domain).
 
 DO $$
 BEGIN
   IF EXISTS (
-    SELECT 1 FROM experiences WHERE title = 'Morning light at Skopje City Park'
+    SELECT 1 FROM experiences WHERE title = 'I watched you read on that bench for a year'
   ) THEN
-    RAISE NOTICE 'Demo experiences already exist — skipping.';
+    RAISE NOTICE 'Demo letters already exist — skipping.';
     RETURN;
   END IF;
 
   INSERT INTO experiences (
-    title, story, category, lat, lng, location_name,
-    image_url, author_mode, author_name, memory_date, status, reactions_count
+    title, story, category, message_to, message_type, emotion_color,
+    lat, lng, location_name, image_url, author_mode, author_name,
+    memory_date, status, reactions_count
   ) VALUES
   (
-    'Morning light at Skopje City Park',
-    'We sat on a bench with hot coffee while the city slowly woke up. Nothing fancy — just quiet laughter, autumn leaves, and the feeling that life can be gentle.',
-    'life_moment', 41.9981, 21.4254, 'Skopje City Park',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Gradski_park_-_panoramio.jpg/960px-Gradski_park_-_panoramio.jpg',
-    'anonymous', NULL, '2024-10-12', 'approved', 3
+    'I watched you read on that bench for a year',
+    'Every morning before work I took the long way through the park. You were always on the same bench, always the same book, coffee going cold while you underlined sentences. I wanted to ask what you were reading. I wanted to say your laugh when the pigeons landed too close was the best part of my day. I never crossed those ten meters. Maybe you never noticed me at all — and that is the part that still hurts.',
+    'confession', 'Ana', 'confession', 'purple',
+    41.9981, 21.4254, 'Skopje City Park', NULL, 'anonymous', NULL, '2019-05-14', 'approved', 3
   ),
   (
-    'First swim in Ohrid Lake',
-    'The water was so clear it felt unreal. My friends cheered from the shore while I floated and watched the mountains mirror the sky. Pure peace.',
-    'nature', 41.1200, 20.8010, 'Ohrid Lake',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Ohrid_Kaneo.jpg/960px-Ohrid_Kaneo.jpg',
-    'nickname', 'LakeWalker', '2023-08-05', 'approved', 7
+    'I should have jumped in after you',
+    'You were twelve. I was fifteen and too proud to look scared. You swam out far at Potpesh and the current pulled — I saw it before you did. I ran along the shore screaming your name instead of going in. A fisherman reached you first. That night Baba slapped me and I deserved it. You never mentioned it again. I am thirty-one now and I still dream of that water. I am sorry I let fear sit between us when you needed your brother.',
+    'apology', 'Nikola', 'apology', 'blue',
+    41.1200, 20.8010, 'Ohrid Lake', NULL, 'nickname', 'Goran', '2011-08-05', 'approved', 7
   ),
   (
-    'Kayaking through Matka Canyon',
-    'The cliffs rose like cathedrals above us. We paddled slowly, listening to birds and water echo off the stone. One of the most beautiful afternoons of my life.',
-    'travel', 41.9500, 21.3000, 'Matka Canyon',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Matka_canyon.jpg/960px-Matka_canyon.jpg',
-    'real_name', 'Elena M.', '2022-06-18', 'approved', 5
+    'We never said what the canyon meant',
+    'That afternoon in the kayak you said Matka feels like a church without walls. I laughed because I did not know how to hold something that honest. Two weeks later you left for Vienna and I answered your last message with a thumbs-up emoji. I think about the echo off the stone — how sound comes back different than you sent it. That is us. I hope the Danube is kinder to you than I was.',
+    'goodbye', 'Elena', 'goodbye', 'gray',
+    41.9500, 21.3000, 'Matka Canyon', NULL, 'real_name', 'Stefan D.', '2018-06-18', 'approved', 5
   ),
   (
-    'Snow day in Mavrovo',
-    'Fresh snow, warm tea, and old songs in a small cabin. We built a tiny snowman and called it our mayor. Simple joy at its best.',
-    'family', 41.6500, 20.7300, 'Mavrovo',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Mavrovo_Lake.jpg/960px-Mavrovo_Lake.jpg',
-    'anonymous', NULL, '2025-01-20', 'approved', 2
+    'The snowman was the only thing we built together',
+    'You worked double shifts in Skopje and came to Mavrovo exhausted, smelling of hospital soap and cigarettes. I was angry at fourteen because you missed my match. That weekend you still drove us up in the old Golf, made tea on a camping stove, and helped me roll the snowman even though your hands were cracked from bleach. I called it stupid. You named it mayor and took a photo I deleted later. I would give anything for that photo now.',
+    'thank_you', 'Mama', 'thank_you', 'yellow',
+    41.6500, 20.7300, 'Mavrovo', NULL, 'anonymous', NULL, '2016-01-20', 'approved', 2
   ),
   (
-    'Evening stroll on Shirok Sokak',
-    'Bitola felt like a movie set — lights, music, couples walking hand in hand. I tried the best gelato in years and promised myself to return every spring.',
-    'food', 41.0280, 21.3290, 'Bitola Shirok Sokak',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Sirok_sokak.jpg/960px-Sirok_sokak.jpg',
-    'nickname', 'SpringSoul', '2024-04-09', 'approved', 4
+    'You walked Shirok Sokak like you owned the light',
+    'It was April and you had that red coat from Tetovo, the one your sister sent from Switzerland. We shared one gelato because we were students and pretended it was enough. You told me your father wanted you to marry a dentist in Gostivar. I told you I would figure something out. I did not figure anything out. I let the year eat us. Sometimes I walk the same street and stand where the fountain used to be, hoping you might turn a corner. You never do.',
+    'love', 'Arta', 'love', 'pink',
+    41.0280, 21.3290, 'Bitola Shirok Sokak', NULL, 'nickname', 'Dardan', '2017-04-09', 'approved', 4
   ),
   (
-    'Graduation hugs in Tetovo',
-    'We ran out of the hall screaming, diplomas in hand, tears and laughter everywhere. Years of study ended with one long group hug on the main square.',
-    'student_life', 42.0100, 20.9714, 'Tetovo',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Painted_Mosque_Tetovo.jpg/960px-Painted_Mosque_Tetovo.jpg',
-    'real_name', 'Arben K.', '2021-07-02', 'approved', 6
+    'We ran out of that hall like we were free',
+    'Painted Mosque in the background, diplomas shaking in our hands, your mother crying in Albanian and my father in Macedonian and neither of them understanding each other but both understanding us. You were the first person who taught me that home can be a language you are still learning. When you moved to Prishtina I said we would visit every month. I visited twice. This letter is not to make myself feel better. It is to tell you that Tetovo square still smells like your cologne when I pass it at night.',
+    'memory', 'Artan', 'memory', 'green',
+    42.0100, 20.9714, 'Tetovo', NULL, 'real_name', 'Besnik K.', '2020-07-02', 'approved', 6
   ),
   (
-    'Sunset over Prilep',
-    'From the hill, the whole valley turned gold. My grandmother told stories about her youth while we shared apples from the garden. Time felt soft and unhurried.',
-    'family', 41.3450, 21.5550, 'Prilep',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Markovi_Kuli%2C_Prilep.jpg/960px-Markovi_Kuli%2C_Prilep.jpg',
-    'anonymous', NULL, '2020-09-14', 'approved', 8
+    'The apples are still sour without you',
+    'Markovi Kuli turned gold that evening and you told me about the year the harvest failed, how your mother hid bread in the mattress. I thought old stories were far away until they were not. You died in February before the trees woke up. I brought apples to the grave last autumn and could not finish them. Dad says grief is private. I think grief is public and we just pretend otherwise in Prilep.',
+    'goodbye', 'Baba', 'goodbye', 'purple',
+    41.3450, 21.5550, 'Prilep', NULL, 'anonymous', NULL, '1998-09-14', 'approved', 8
   ),
   (
-    'Kruševo sky at dawn',
-    'We woke before sunrise to see the clouds below us. The wind was cold but our hearts were warm. A memory I replay whenever life gets heavy.',
-    'nature', 41.3689, 21.2489, 'Kruševo',
-    'https://upload.wikimedia.org/wikipedia/commons/d/d5/Krusevo.jpg',
-    'nickname', 'CloudChaser', '2023-05-30', 'approved', 9
+    'The clouds were below us and you were still sad',
+    'We drove up at four in the morning because you said you could not breathe in the flat. Ilinden monument white against the dark, wind that cuts through jackets. You stood on the wall and said nothing for an hour. I should have asked the right question. Instead I took a photo for Instagram. Three months later you stopped answering. If you read this somewhere: the view is still here. You can come back without explaining where you went.',
+    'healing', 'Fatmir', 'healing', 'blue',
+    41.3689, 21.2489, 'Kruševo', NULL, 'nickname', 'Ivana', '2022-05-30', 'approved', 9
   ),
   (
-    'Quiet afternoon at Dojran Lake',
-    'Fishermen waved from their boats, and the lake shimmered like glass. We ate fresh fish by the shore and talked until the stars appeared.',
-    'food', 41.2460, 22.7450, 'Dojran Lake',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Dojran_Lake.jpg/960px-Dojran_Lake.jpg',
-    'real_name', 'Nikola P.', '2022-08-22', 'approved', 3
+    'I chose Berlin over the lake',
+    'We ate fish with our hands like children, grease on our wrists, stars coming out over the water. You said we could buy the small house near Star Dojran — fix it slowly, grow old loudly. I said I needed five years in Germany first, to send money back, to make it proper. Five became ten. You married someone who stayed. I send money still. It arrives empty. Dojran is glass when I visit alone. I see us in it and look away.',
+    'regret', 'Marija', 'regret', 'red',
+    41.2460, 22.7450, 'Dojran Lake', NULL, 'real_name', 'Petar N.', '2014-08-22', 'approved', 3
   ),
   (
-    'Hidden bookshop in Štip',
-    'Tucked between two cafés, a tiny shop smelled of paper and cinnamon tea. The owner recommended a poetry book that still sits on my nightstand.',
-    'hidden_gem', 41.7450, 22.1958, 'Štip',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C5%A0tip_20.JPG/960px-%C5%A0tip_20.JPG',
-    'anonymous', NULL, '2024-11-03', 'approved', 1
+    'You gave me a book when I had no money',
+    'I was seventeen, pockets empty after helping my sister with rent. Your shop smelled of paper and the cinnamon tea you always offered but never charged for. I stood too long with a thin poetry book and you said take it, pay when life is kinder. I paid you seven years later and you had already closed the shop. The book is on my nightstand in Skopje. I read the same poem when I want to remember that Štip once felt like mercy.',
+    'thank_you', 'Hajredin', 'thank_you', 'purple',
+    41.7450, 22.1958, 'Štip', NULL, 'anonymous', NULL, '2012-11-03', 'approved', 1
   ),
   (
-    'Try the burek on this corner',
-    'If you are near the old bazaar, stop at the small bakery with the blue awning. Order cheese burek fresh from the oven — crisp, warm, unforgettable.',
-    'recommendation', 41.9973, 21.4315, 'Skopje Old Bazaar',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Old_Bazaar%2C_Skopje.jpg/960px-Old_Bazaar%2C_Skopje.jpg',
-    'nickname', 'FoodieMK', NULL, 'approved', 11
+    'You fed me when I had forty denars',
+    'It was January and the bus from Kumanovo was late and my wallet was stolen near the Stone Bridge. I stood at your window with forty denars and shame so thick I could taste it. You wrapped two bureks, hot, cheese running through the paper, and pushed an extra one across the counter without a word. I wanted to say my name. I wanted to say thank you in a language big enough. I never found your stall again after the renovation. I hope your hands are still warm.',
+    'memory', 'The woman at the blue awning', 'memory', 'orange',
+    41.9973, 21.4315, 'Skopje Old Bazaar', NULL, 'nickname', 'Besa', NULL, 'approved', 11
   ),
   (
-    'Friends who became family',
-    'We missed the last bus and walked home under streetlights, singing off-key. That night we decided we would always show up for each other. And we did.',
-    'friendship', 41.9964, 21.4310, 'Skopje',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Stone_Bridge_Skopje.jpg/960px-Stone_Bridge_Skopje.jpg',
-    'anonymous', NULL, '2019-12-31', 'approved', 12
+    'We walked home singing off-key on New Year''s Eve',
+    'The last bus left without us near Debar Maalo and we decided walking to Aerodrom at two in the morning was wisdom. You carried my shoes when the blisters broke. Simona lied to her parents on the phone and said we were at a study group. Viktor quoted poetry badly and we laughed until the Vardar sounded like applause. That night we promised to show up for each other. Life scattered us — Zurich, Dubai, a village near Strumica. I am writing to say the promise still stands on my side.',
+    'love', 'Dragan, Simona, and Viktor', 'love', 'pink',
+    41.9964, 21.4310, 'Skopje', NULL, 'anonymous', NULL, '2015-12-31', 'approved', 12
   ),
   (
-    'Our first dance',
-    'Rain on the windows, a slow song from the radio, and two shy hearts finding courage on a tiny kitchen floor. It was imperfect and absolutely perfect.',
-    'love', 42.0010, 21.4090, 'Skopje',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Skopje_panorama.jpg/960px-Skopje_panorama.jpg',
-    'nickname', 'HeartNote', '2018-02-14', 'approved', 15
+    'Rain on the windows, your kitchen, our first dance',
+    'Radio Skopje played something old and you said you did not know how to slow-dance in socks on linoleum. I said neither do I and we stepped on each other''s feet like teenagers though we were already twenty-six. The radiator clicked. Rain made the city small. I wanted to tell you that I had loved you since the protest on Macedonia Square when you shouted louder than the loudspeakers. I said nothing. We divorced kindly three years later. I still remember the song.',
+    'love', 'Snežana', 'love', 'red',
+    42.0010, 21.4090, 'Skopje', NULL, 'anonymous', NULL, '2018-02-14', 'approved', 15
   ),
   (
-    'The day I started my first job',
-    'Nervous hands, new shoes, and a mentor who smiled and said, "You belong here." That sentence carried me through the whole first month.',
-    'work', 41.9830, 21.4560, 'Skopje',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Skopje_2014.jpg/960px-Skopje_2014.jpg',
-    'real_name', 'Marija S.', '2017-09-01', 'approved', 2
+    'You said I belong here and I almost believed you',
+    'First day at the firm near Karposh, new shoes biting my heels, hands shaking on the keyboard. You were not even my boss — you were the client who waited while I rebooted the laptop twice. You said calm down, everyone breaks things on day one, you belong here. Nobody had said that to me in Skopje before. I thought belonging was something you earned by leaving and returning with a foreign salary. I stayed. I am still here. You retired without me saying this properly.',
+    'thank_you', 'Prof. Dimovski', 'thank_you', 'green',
+    41.9830, 21.4560, 'Skopje', NULL, 'real_name', 'Marija S.', '2017-09-01', 'approved', 2
   ),
   (
-    'Slipped on ice, laughed for an hour',
-    'I fell spectacularly in the parking lot — coffee everywhere, dignity nowhere. My brother filmed it and we cried laughing for an hour. Best bad moment ever.',
-    'funny_moment', 41.7350, 22.1900, 'Štip',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4_%D0%BD%D0%B0_%D0%B3%D1%80%D0%B0%D0%B4%D0%BE%D1%82_%D0%A8%D1%82%D0%B8%D0%BF.jpg/960px-%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4_%D0%BD%D0%B0_%D0%B3%D1%80%D0%B0%D0%B4%D0%BE%D1%82_%D0%A8%D1%82%D0%B8%D0%BF.jpg',
-    'nickname', 'ClumsyKing', '2024-01-08', 'approved', 4
+    'You filmed me falling and we laughed until we cried',
+    'Parking lot behind the hospital in Štip, ice like glass, coffee flying, my dignity gone in one second. You could have helped me up. Instead you filmed and wheezed so hard you sat on a car bumper. We watched the video seventeen times that night with rakija and tears. Last year you got sick and I held your hand in the same building I fell in front of. I never told you that video is still on my phone. I watch it when I need proof that joy can live next to pain.',
+    'memory', 'Blagoj', 'memory', 'yellow',
+    41.7350, 22.1900, 'Štip', NULL, 'nickname', 'Blagica', '2021-01-08', 'approved', 4
   );
 
-  RAISE NOTICE 'Demo experiences seeded successfully.';
+  RAISE NOTICE 'Demo letters seeded successfully.';
 END $$;

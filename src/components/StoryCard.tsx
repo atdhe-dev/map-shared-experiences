@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { MapPin, Heart, ChevronRight, X } from 'lucide-react'
+import { MapPin, Heart, X, Flag } from 'lucide-react'
 import type { Experience } from '../types'
-import { getCategory } from '../lib/categories'
-import { getCategoryTint } from '../lib/categoryTints'
 import { formatDate, getAuthorDisplay, truncateText, timeAgo } from '../lib/format'
-import { CategoryIcon } from './ui/CategoryIcon'
+import { LetterNote } from './LetterNote'
 
 interface StoryCardProps {
   experience: Experience
   onClose: () => void
   onReact: (id: string) => void
+  onReport?: (id: string) => void
   reacting: boolean
+  reporting?: boolean
   reactionCount: number
   hasReacted: boolean
   reactionError?: string | null
@@ -20,127 +20,107 @@ export function StoryCard({
   experience,
   onClose,
   onReact,
+  onReport,
   reacting,
+  reporting,
   reactionCount,
   hasReacted,
   reactionError,
 }: StoryCardProps) {
   const [expanded, setExpanded] = useState(false)
-  const cat = getCategory(experience.category)
-  const tint = getCategoryTint(experience.category)
 
   return (
     <article className="story-card animate-gentle-rise">
-      <button
-        type="button"
-        onClick={onClose}
-        className="bubble-close absolute top-5 right-5 z-10"
-        aria-label="Close story"
-      >
-        <X size={15} strokeWidth={2} />
-      </button>
-
-      {experience.image_url ? (
-        <div className="story-card-image">
-          <img src={experience.image_url} alt="" />
-          <span
-            className="story-card-badge"
-            style={{ backgroundColor: tint.bg, color: tint.icon }}
-          >
-            <CategoryIcon categoryId={experience.category} size={11} strokeWidth={1.75} />
-            {cat.label}
-          </span>
-        </div>
-      ) : (
-        <div className="px-6 pt-6">
-          <span
-            className="bubble-pill"
-            style={{ backgroundColor: tint.bg, color: tint.icon, borderColor: `${tint.accent}55` }}
-          >
-            <CategoryIcon categoryId={experience.category} size={11} strokeWidth={1.75} />
-            {cat.label}
-          </span>
-        </div>
-      )}
-
-      <div className="story-card-body">
-        <h2 className="font-display text-[1.65rem] font-semibold text-charcoal leading-tight mb-4">
-          {experience.title}
-        </h2>
-
-        <div className="flex flex-wrap gap-2 mb-5">
-          {experience.location_name && (
-            <span className="bubble-pill">
-              <MapPin size={12} strokeWidth={1.75} className="text-terracotta shrink-0" />
-              {experience.location_name}
-            </span>
-          )}
-          <span className="bubble-pill">{timeAgo(experience.created_at)}</span>
-          <span className="bubble-pill">{getAuthorDisplay(experience)}</span>
-        </div>
-
-        <p className="text-[0.9375rem] text-charcoal-soft leading-[1.75] whitespace-pre-wrap">
-          {expanded ? experience.story : truncateText(experience.story, 180)}
-        </p>
-
-        {!expanded && experience.story.length > 180 && (
-          <button
-            type="button"
-            onClick={() => setExpanded(true)}
-            className="mt-3 text-xs text-terracotta hover:text-charcoal transition-colors font-semibold"
-          >
-            Continue reading…
-          </button>
-        )}
-
-        <hr className="bubble-divider" />
-
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            disabled={hasReacted || reacting}
-            onClick={() => onReact(experience.id)}
-            className={`bubble-pill bubble-pill--accent transition-all duration-300 ${
-              hasReacted ? 'opacity-90' : 'hover:scale-[1.02]'
-            }`}
-          >
-            <Heart
-              size={14}
-              strokeWidth={1.75}
-              className={hasReacted ? 'fill-terracotta text-terracotta' : ''}
-            />
-            {hasReacted ? 'Touched' : 'This touched me'}
-          </button>
-          {reactionCount > 0 && (
-            <span className="bubble-pill text-[10px]">
-              {reactionCount} touched
-            </span>
-          )}
-        </div>
-
-        {reactionError && (
-          <p className="text-xs text-charcoal-soft mt-3 bubble-pill w-full justify-center">
-            {reactionError}
-          </p>
-        )}
-
-        {experience.memory_date && (
-          <p className="bubble-pill mt-4 text-[10px]">
-            Memory of {formatDate(experience.memory_date)}
-          </p>
-        )}
-      </div>
-
-      {!expanded && experience.story.length > 180 && (
+      <LetterNote experience={experience} className="diary-note--in-card diary-note--flat" showPin={false}>
         <button
           type="button"
-          onClick={() => setExpanded(true)}
-          className="story-card-cta"
+          onClick={onClose}
+          className="explore-float__close !absolute top-3 right-3 z-10"
+          aria-label="Close message"
         >
-          Read full story
-          <ChevronRight size={16} strokeWidth={2} />
+          <X size={15} strokeWidth={2} />
         </button>
-      )}
+
+        {experience.image_url && (
+          <div className="story-card-image -mx-1 mb-3">
+            <img src={experience.image_url} alt="" />
+          </div>
+        )}
+
+        <div className="diary-note__scroll">
+          <h2 className="diary-note__title">{experience.title}</h2>
+          {experience.location_name && (
+            <p className="diary-note__where flex items-center gap-1">
+              <MapPin size={11} strokeWidth={1.75} />
+              {experience.location_name}
+            </p>
+          )}
+
+          <p className="diary-note__body whitespace-pre-wrap">
+            {expanded ? experience.story : truncateText(experience.story, 180)}
+          </p>
+
+          {!expanded && experience.story.length > 180 && (
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="mt-3 text-xs text-diary-ink-faded hover:text-diary-ink transition-colors font-semibold underline underline-offset-2"
+              style={{ color: 'var(--diary-ink-faded)' }}
+            >
+              Continue reading…
+            </button>
+          )}
+
+          <div className="flex flex-wrap gap-2 mt-4 text-[11px]" style={{ color: 'var(--diary-ink-faded)' }}>
+            <span>{timeAgo(experience.created_at)}</span>
+            <span>·</span>
+            <span>{getAuthorDisplay(experience)}</span>
+          </div>
+
+          {experience.memory_date && (
+            <p className="text-[10px] mt-3 italic" style={{ color: 'var(--diary-ink-faded)' }}>
+              Written for {formatDate(experience.memory_date)}
+            </p>
+          )}
+        </div>
+
+        <footer className="diary-note__footer">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <button
+              type="button"
+              disabled={hasReacted || reacting}
+              onClick={() => onReact(experience.id)}
+              className={`bubble-pill bubble-pill--accent transition-all duration-300 ${
+                hasReacted ? 'opacity-90' : 'hover:scale-[1.02]'
+              }`}
+            >
+              <Heart
+                size={14}
+                strokeWidth={1.75}
+                className={hasReacted ? 'fill-current' : ''}
+              />
+              {hasReacted ? 'Stayed with me' : 'This stayed with me'}
+            </button>
+            {reactionCount > 0 && (
+              <span className="bubble-pill text-[10px]">{reactionCount} felt</span>
+            )}
+            {onReport && (
+              <button
+                type="button"
+                disabled={reporting}
+                onClick={() => onReport(experience.id)}
+                className="bubble-pill text-[10px] ml-auto"
+              >
+                <Flag size={12} strokeWidth={1.75} />
+                Report
+              </button>
+            )}
+          </div>
+          {reactionError && (
+            <p className="text-xs mt-3 bubble-pill w-full justify-center">{reactionError}</p>
+          )}
+        </footer>
+      </LetterNote>
     </article>
   )
 }

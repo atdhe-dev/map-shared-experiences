@@ -49,12 +49,13 @@ Verifies: public read of approved posts, pending hidden, anonymous submit, react
 
 ## Seed demo experiences
 
-15 safe demo stories are included for map testing. To seed (or re-seed on a fresh project):
+16 deep unsent letters (Macedonian & Albanian names, North Macedonia places) are included for testing.
 
-1. Run `npm run seed:demo` for instructions, or
-2. Paste `scripts/seed-demo-experiences.sql` into **Supabase → SQL Editor → Run**
+**Existing database:** run `npm run seed:letters` to refresh all demo content.
 
-The script is idempotent — it skips if demo data already exists.
+**Fresh project:** paste `scripts/seed-demo-experiences.sql` into **Supabase → SQL Editor → Run**
+
+The seed script is idempotent — it skips if demo data already exists.
 
 ## Admin Setup
 

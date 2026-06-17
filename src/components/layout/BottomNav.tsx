@@ -11,7 +11,7 @@ export function BottomNav({ onAdd }: BottomNavProps) {
         <span className="mobile-share-btn__icon">
           <Plus size={17} strokeWidth={2.5} />
         </span>
-        Share your experience
+        Leave a letter
       </button>
     </nav>
   )

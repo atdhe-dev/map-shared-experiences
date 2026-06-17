@@ -10,7 +10,7 @@ const variants = {
   primary:
     'bg-gradient-to-br from-walnut to-charcoal text-white hover:brightness-110 shadow-[0_4px_14px_rgba(74,56,50,0.25),inset_0_1px_0_rgba(255,255,255,0.15)] active:scale-[0.98] transition-all duration-300 font-bold',
   warm:
-    'bg-gradient-to-r from-terracotta-light via-terracotta to-[#1f5f6d] text-white hover:brightness-105 shadow-[0_4px_14px_rgba(45,122,138,0.35),inset_0_1px_0_rgba(255,255,255,0.35)] active:scale-[0.98] transition-all duration-300 font-bold',
+    'bg-[var(--diary-ink)] text-[#f6eed8] hover:brightness-110 shadow-[0_4px_14px_rgba(42,24,16,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] active:scale-[0.98] transition-all duration-300 font-bold',
   secondary:
     'bg-gradient-to-b from-white to-ivory-dark text-charcoal hover:brightness-[1.02] border-2 border-stone-light shadow-[0_4px_14px_rgba(44,51,56,0.06)] active:scale-[0.98] transition-all duration-300 font-semibold',
   ghost:

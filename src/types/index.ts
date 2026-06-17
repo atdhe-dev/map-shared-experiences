@@ -8,6 +8,9 @@ export interface Experience {
   title: string
   story: string
   category: string
+  message_to: string | null
+  message_type: string | null
+  emotion_color: string | null
   lat: number
   lng: number
   location_name: string | null
@@ -26,6 +29,9 @@ export interface ExperienceInsert {
   title: string
   story: string
   category: string
+  message_to: string
+  message_type: string
+  emotion_color: string
   lat: number
   lng: number
   location_name?: string | null
@@ -43,12 +49,12 @@ export interface GeocodingResult {
 }
 
 export interface ExperienceFilters {
-  category: string | null
+  messageType: string | null
+  emotionColor: string | null
   sort: SortOption
   nearMe: boolean
   withPhotos: boolean
   anonymousOnly: boolean
-  recommendationsOnly: boolean
   searchQuery: string
 }
 

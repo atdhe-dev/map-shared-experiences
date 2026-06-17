@@ -2,14 +2,13 @@ import type { ReactNode } from 'react'
 
 interface AppFrameProps {
   children: ReactNode
-  sidebar?: ReactNode
+  mode?: 'desk' | 'map'
 }
 
-export function AppFrame({ children, sidebar }: AppFrameProps) {
+export function AppFrame({ children, mode = 'desk' }: AppFrameProps) {
   return (
-    <div className="app-viewport">
+    <div className={`app-viewport app-viewport--${mode}`}>
       <div className="app-frame">
-        {sidebar}
         <div className="app-map-region">{children}</div>
       </div>
     </div>

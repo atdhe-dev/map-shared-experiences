@@ -1,6 +1,7 @@
 import { X, MapPin } from 'lucide-react'
 import type { Experience } from '../types'
 import { truncateText } from '../lib/format'
+import { getMessageTo } from '../lib/messageHelpers'
 
 interface NearMeCardProps {
   experiences: Experience[]
@@ -17,7 +18,7 @@ export function NearMeCard({ experiences, onSelect, onClose }: NearMeCardProps) 
         <div>
           <p className="label-caps mb-1">Nearby</p>
           <h3 className="font-display text-lg font-semibold text-charcoal leading-tight">
-            Stories near you
+            Messages left near you
           </h3>
         </div>
         <button
@@ -49,6 +50,9 @@ export function NearMeCard({ experiences, onSelect, onClose }: NearMeCardProps) 
                 </span>
               )}
               <span className="min-w-0 pt-0.5">
+                <p className="text-[10px] uppercase tracking-wider text-stone font-semibold truncate">
+                  To: {getMessageTo(exp)}
+                </p>
                 <p className="font-display text-sm font-semibold text-charcoal truncate">
                   {exp.title}
                 </p>
@@ -61,7 +65,7 @@ export function NearMeCard({ experiences, onSelect, onClose }: NearMeCardProps) 
         ))}
       </ul>
       <p className="px-5 py-3 text-[11px] text-terracotta font-semibold border-t border-stone-light">
-        {experiences.length} {experiences.length === 1 ? 'story' : 'stories'} nearby
+        {experiences.length} {experiences.length === 1 ? 'message' : 'messages'} nearby
       </p>
     </div>
   )

@@ -12,20 +12,24 @@ export function MapPickBar({
   onBack: () => void
 }) {
   return (
-    <nav className="map-pick-bar" aria-label="Place memory on map">
+    <nav className="map-pick-bar" aria-label="Place letter on map">
       <div className="map-pick-bar__inner">
         {hasLocation ? (
-          <div className="map-pick-bar__confirm">
-            <Button size="sm" variant="warm" onClick={onConfirm}>
-              Yes, here
+          <div className="flex items-center gap-2 w-full">
+            <Button size="sm" variant="warm" className="flex-1" onClick={onConfirm}>
+              Place here
             </Button>
-            <button type="button" className="map-pick-bar__again" onClick={onChooseAgain}>
-              Choose again
+            <button type="button" className="write-flow-link" onClick={onChooseAgain}>
+              Move pin
             </button>
           </div>
-        ) : null}
-        <button type="button" className="map-pick-bar__back" onClick={onBack}>
-          Back
+        ) : (
+          <p className="text-sm text-center m-0 mb-2 write-flow-hint">
+            Tap the map where this letter belongs
+          </p>
+        )}
+        <button type="button" className="map-pick-bar__back w-full text-center" onClick={onBack}>
+          Cancel
         </button>
       </div>
     </nav>

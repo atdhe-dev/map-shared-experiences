@@ -1,8 +1,7 @@
-import { Navigation, Camera, User, Star, X, Plus } from 'lucide-react'
+import { Navigation, Camera, User, X, Plus } from 'lucide-react'
 import type { ExperienceFilters } from '../../types'
-import { CATEGORIES } from '../../lib/categories'
-import { getCategoryTint } from '../../lib/categoryTints'
-import { CategoryIcon } from '../ui/CategoryIcon'
+import { MESSAGE_TYPES } from '../../lib/messageTypes'
+import { EMOTION_COLORS } from '../../lib/emotionColors'
 import { SegmentedControl } from '../ui/CategoryChip'
 import { SearchBar } from '../SearchBar'
 import { LogoMark, MountainIllustration } from './Logo'
@@ -54,16 +53,22 @@ export function Sidebar({
   onShare,
 }: SidebarProps) {
   const toggle = (key: keyof ExperienceFilters, value?: unknown) => {
-    if (key === 'category') {
-      onChange({ ...filters, category: filters.category === value ? null : (value as string) })
+    if (key === 'messageType') {
+      onChange({
+        ...filters,
+        messageType: filters.messageType === value ? null : (value as string),
+      })
+    } else if (key === 'emotionColor') {
+      onChange({
+        ...filters,
+        emotionColor: filters.emotionColor === value ? null : (value as string),
+      })
     } else if (key === 'sort') {
       onChange({ ...filters, sort: value as ExperienceFilters['sort'] })
     } else if (key === 'withPhotos') {
       onChange({ ...filters, withPhotos: !filters.withPhotos })
     } else if (key === 'anonymousOnly') {
       onChange({ ...filters, anonymousOnly: !filters.anonymousOnly })
-    } else if (key === 'recommendationsOnly') {
-      onChange({ ...filters, recommendationsOnly: !filters.recommendationsOnly })
     } else if (key === 'nearMe') {
       if (!nearMeActive) onNearMe()
       else onChange({ ...filters, nearMe: false })
@@ -71,10 +76,10 @@ export function Sidebar({
   }
 
   const hasActive =
-    filters.category ||
+    filters.messageType ||
+    filters.emotionColor ||
     filters.withPhotos ||
     filters.anonymousOnly ||
-    filters.recommendationsOnly ||
     nearMeActive
 
   return (
@@ -84,19 +89,20 @@ export function Sidebar({
           <LogoMark size={40} />
           <div>
             <h1 className="font-display text-lg font-medium text-charcoal leading-tight">
-              Shared Experiences
+              The Unsent Diary
             </h1>
-            <p className="text-[11px] text-stone tracking-wide">MK</p>
+            <p className="text-[11px] text-stone tracking-wide">North Macedonia</p>
           </div>
         </div>
-        <p className="text-xs text-stone leading-relaxed mb-7 pr-2">
-          Real stories from real places in North Macedonia.
+        <p className="text-xs text-stone leading-relaxed mb-7 pr-2 italic">
+          A map of letters never sent — each pin a note left behind, waiting to be read.
         </p>
 
         <SearchBar
           value={filters.searchQuery}
           onChange={(q) => onChange({ ...filters, searchQuery: q })}
           variant="sidebar"
+          placeholder="Search places, names, or messages…"
         />
 
         <p className="label-caps mt-8 mb-3">Explore</p>
@@ -119,16 +125,10 @@ export function Sidebar({
             icon={User}
             label="Anonymous"
           />
-          <ExploreItem
-            active={filters.recommendationsOnly}
-            onClick={() => toggle('recommendationsOnly')}
-            icon={Star}
-            label="Recommendations"
-          />
         </nav>
         {geoDenied && (
           <p className="text-[11px] text-stone mt-2 px-3 leading-relaxed">
-            Enable location to explore stories near you.
+            Enable location to find messages left near you.
           </p>
         )}
 
@@ -136,44 +136,42 @@ export function Sidebar({
           <SegmentedControl
             options={[
               { value: 'newest' as const, label: 'Newest' },
-              { value: 'most_loved' as const, label: 'Most loved' },
+              { value: 'most_loved' as const, label: 'Most felt' },
             ]}
             value={filters.sort}
             onChange={(sort) => toggle('sort', sort)}
           />
         </div>
 
-        <p className="label-caps mt-6 mb-3">Categories</p>
-        <div className="grid grid-cols-2 gap-2">
-          {CATEGORIES.map((cat) => {
-            const tint = getCategoryTint(cat.id)
-            const selected = filters.category === cat.id
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => toggle('category', cat.id)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-300 ${
-                  selected
-                    ? 'ring-2 ring-offset-1 shadow-md text-white'
-                    : 'hover:shadow-md hover:-translate-y-px'
-                }`}
-                style={
-                  selected
-                    ? { background: `linear-gradient(135deg, ${tint.marker} 0%, ${tint.icon} 100%)`, boxShadow: `0 4px 12px ${tint.markerGlow}` }
-                    : { backgroundColor: tint.bg, color: tint.icon, border: `1px solid ${tint.bgDeep}` }
-                }
-              >
-                <CategoryIcon
-                  categoryId={cat.id}
-                  size={13}
-                  className={selected ? 'text-gold-light' : ''}
-                  strokeWidth={1.5}
-                />
-                <span className="truncate">{cat.label}</span>
-              </button>
-            )
-          })}
+        <p className="label-caps mt-6 mb-3">Message type</p>
+        <div className="flex flex-wrap gap-1.5">
+          {MESSAGE_TYPES.slice(0, 8).map((type) => (
+            <button
+              key={type.id}
+              type="button"
+              onClick={() => toggle('messageType', type.id)}
+              className={`message-type-chip message-type-chip--compact${filters.messageType === type.id ? ' message-type-chip--active' : ''}`}
+            >
+              {type.label}
+            </button>
+          ))}
+        </div>
+
+        <p className="label-caps mt-5 mb-3">Emotion</p>
+        <div className="emotion-color-picker emotion-color-picker--sidebar">
+          {EMOTION_COLORS.map((color) => (
+            <button
+              key={color.id}
+              type="button"
+              title={color.label}
+              aria-label={color.label}
+              onClick={() => toggle('emotionColor', color.id)}
+              className={`emotion-color-dot${filters.emotionColor === color.id ? ' emotion-color-dot--active' : ''}`}
+              style={{ '--emotion-accent': color.accent } as React.CSSProperties}
+            >
+              <span className="emotion-color-dot__ring" />
+            </button>
+          ))}
         </div>
 
         {hasActive && (
@@ -182,10 +180,10 @@ export function Sidebar({
             onClick={() =>
               onChange({
                 ...filters,
-                category: null,
+                messageType: null,
+                emotionColor: null,
                 withPhotos: false,
                 anonymousOnly: false,
-                recommendationsOnly: false,
                 nearMe: false,
               })
             }
@@ -206,11 +204,11 @@ export function Sidebar({
               <span className="app-nav-share__icon">
                 <Plus size={18} strokeWidth={2.5} />
               </span>
-              Share your experience
+              Leave a letter
             </button>
           )}
           <p className="text-[11px] text-stone mb-3">
-            {storyCount} {storyCount === 1 ? 'story' : 'stories'} on the map
+            {storyCount} {storyCount === 1 ? 'message' : 'messages'} on the map
           </p>
           <MountainIllustration />
         </div>

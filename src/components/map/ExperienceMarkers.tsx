@@ -74,7 +74,14 @@ export function ExperienceMarkers({
           <Marker
             key={exp.id}
             position={[exp.lat, exp.lng]}
-            icon={createExperienceIcon(exp.category, exp.image_url, exp.id, isActive)}
+            icon={createExperienceIcon(
+              exp.category,
+              exp.image_url,
+              exp.id,
+              isActive,
+              exp.message_type,
+              exp.emotion_color,
+            )}
             eventHandlers={{
               click: (e) => {
                 L.DomEvent.stopPropagation(e.originalEvent)

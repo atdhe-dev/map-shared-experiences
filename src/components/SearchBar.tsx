@@ -11,7 +11,7 @@ interface SearchBarProps {
 export function SearchBar({
   value,
   onChange,
-  placeholder = 'Search stories and places…',
+  placeholder = 'Search places, names, or messages…',
   variant = 'default',
 }: SearchBarProps) {
   const [focused, setFocused] = useState(false)

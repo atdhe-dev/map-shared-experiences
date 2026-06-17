@@ -1,0 +1,814 @@
+/* ─── Apple-style UI: sheets, tab bar, map fixes ─── */
+
+:root {
+  --tab-bar-h: 50px;
+  --tab-bar-float-gap: 10px;
+  --app-clearance: calc(
+    var(--tab-bar-h) + var(--tab-bar-float-gap) + max(10px, env(safe-area-inset-bottom, 0px)) + 12px
+  );
+  --chrome-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  --chrome-write-h: var(--tab-bar-h);
+  --map-chrome-clearance: var(--app-clearance);
+}
+
+/* ─── Floating tab bar (Apple-style) ─── */
+.apple-tab-bar {
+  position: fixed;
+  z-index: 1100;
+  left: max(20px, env(safe-area-inset-left));
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  height: var(--tab-bar-h);
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.apple-tab-bar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 42px;
+  padding: 4px 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--app-text-tertiary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.apple-tab-bar__item:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.apple-tab-bar__item--active {
+  color: var(--app-accent);
+}
+
+.apple-tab-bar__item--primary {
+  color: var(--app-text);
+}
+
+.apple-tab-bar__label {
+  font-family: var(--app-font);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.wall-nav {
+  display: none !important;
+}
+
+.map-shell {
+  --mobile-bottom-clearance: var(--app-clearance);
+}
+
+/* ─── Apple sheets (search + write) ─── */
+.apple-sheet-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.apple-sheet-root--center {
+  align-items: center;
+  padding: 16px;
+}
+
+.apple-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: auto;
+  animation: apple-fade-in 0.25s ease;
+}
+
+.apple-sheet {
+  position: relative;
+  width: 100%;
+  max-height: min(92dvh, 720px);
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  background: var(--app-surface);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.12);
+  animation: apple-sheet-up 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  overflow: hidden;
+}
+
+.apple-sheet-root--center .apple-sheet--modal {
+  max-width: 480px;
+  max-height: min(88vh, 640px);
+  border-radius: 20px;
+  animation: apple-scale-in 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.apple-sheet--compact {
+  max-height: min(42dvh, 360px);
+}
+
+.apple-sheet--search {
+  max-height: min(38dvh, 320px);
+}
+
+@keyframes apple-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes apple-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes apple-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.apple-sheet__handle {
+  flex-shrink: 0;
+  width: 36px;
+  height: 5px;
+  margin: 8px auto 4px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.apple-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 20px 12px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+  border-bottom: 1px solid var(--app-border);
+}
+
+.apple-sheet__header--search {
+  padding-top: 0;
+}
+
+.apple-sheet__title {
+  margin: 0;
+  font-family: var(--app-font);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+.apple-sheet__done {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  font-family: var(--app-font);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--app-accent);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.apple-sheet__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+
+.apple-sheet__body--search {
+  padding-top: 12px;
+}
+
+.apple-sheet__body--write {
+  padding-top: 8px;
+}
+
+.apple-sheet__hint {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--app-text-secondary);
+}
+
+.apple-sheet__clear {
+  margin-top: 16px;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--app-font);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--app-accent);
+  cursor: pointer;
+}
+
+/* Search input inside sheet */
+.apple-sheet .search-bar--mobile {
+  background: var(--app-elevated) !important;
+  border: 1px solid var(--app-border) !important;
+  border-radius: 12px !important;
+  min-height: 48px !important;
+  padding: 0 14px !important;
+}
+
+.apple-sheet .search-bar--mobile input {
+  font-size: 17px !important;
+  color: var(--app-text) !important;
+}
+
+.apple-sheet .search-bar--mobile input::placeholder {
+  color: var(--app-text-tertiary) !important;
+}
+
+/* Write flow overrides — strip legacy gold/decorative modal chrome */
+.app-viewport--desk .share-modal-panel::before,
+.app-viewport--map .share-modal-panel::before,
+.app-viewport--desk .share-modal-panel::after,
+.app-viewport--map .share-modal-panel::after {
+  display: none !important;
+}
+
+/* ─── Mini map in note read ─── */
+.note-location-map {
+  margin: 24px 0 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--app-border);
+}
+
+.note-location-map__label {
+  margin: 0 0 10px;
+  font-family: var(--app-font);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--app-text-tertiary);
+}
+
+.note-location-map__frame {
+  height: 160px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow-sm);
+  background: var(--app-elevated);
+}
+
+.note-location-map__map {
+  height: 100% !important;
+  width: 100% !important;
+  z-index: 0;
+}
+
+.note-location-map__frame .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  background: #e8e4dc !important;
+}
+
+.note-map-pin__dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--app-accent);
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ─── Main map: small dots only, no photo blow-up ─── */
+.app-viewport--map .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  touch-action: pan-x pan-y;
+}
+
+.app-viewport--map .leaflet-marker-icon.custom-marker {
+  background: transparent !important;
+  border: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.app-viewport--map .custom-marker .memory-pin {
+  transform: none !important;
+  filter: none !important;
+}
+
+.app-viewport--map .custom-marker:hover .memory-pin,
+.app-viewport--map .custom-marker.pin-active .memory-pin {
+  transform: none !important;
+  filter: none !important;
+}
+
+.app-viewport--map .memory-pin__dot {
+  display: block !important;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--pin-accent, var(--app-accent));
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.app-viewport--map .memory-pin__photo {
+  display: none !important;
+}
+
+.app-viewport--map .memory-pin--dot.memory-pin--active .memory-pin__dot {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px rgba(91, 124, 153, 0.35);
+}
+
+.app-viewport--map .user-location-pin--compact .user-location-pin__core {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--app-accent);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.app-viewport--map .map-controls-bubble--inset {
+  bottom: calc(var(--app-clearance) + 8px) !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+}
+
+.app-viewport--map .map-controls-bubble {
+  border-radius: 14px !important;
+  overflow: hidden;
+}
+
+.app-viewport--map .map-control-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Note read: Done button Apple style */
+.note-read__back {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--app-accent);
+}
+
+/* Write form inside sheet */
+.apple-sheet .share-flow-input {
+  width: 100%;
+  padding: 12px 14px !important;
+  font-size: 17px !important;
+}
+
+.apple-sheet .share-flow-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8125rem !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.apple-sheet .write-method-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 16px;
+  border: 1px solid var(--app-border);
+  border-radius: 14px;
+  background: var(--app-elevated);
+  text-align: left;
+  cursor: pointer;
+}
+
+.apple-sheet .write-method-btn__label {
+  margin: 0;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+.apple-sheet--write {
+  max-height: min(92dvh, 780px);
+}
+
+.apple-sheet .write-letter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.apple-sheet .write-flow-lead {
+  margin: 0 0 4px;
+  font-family: var(--app-serif);
+  font-size: 1rem;
+  line-height: 1.45;
+  text-align: center;
+  color: var(--app-text-secondary);
+}
+
+.apple-sheet .write-from-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.apple-sheet .write-from-chip {
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: var(--app-elevated);
+  font-family: var(--app-font);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.apple-sheet .write-from-chip--on {
+  background: var(--app-accent);
+  border-color: var(--app-accent);
+  color: #fff;
+}
+
+.apple-sheet .write-more-options {
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: var(--app-elevated);
+  overflow: hidden;
+}
+
+.apple-sheet .write-more-options__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  font-family: var(--app-font);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.apple-sheet .write-more-options__summary::-webkit-details-marker {
+  display: none;
+}
+
+.apple-sheet .write-more-options[open] .write-more-options__summary svg {
+  transform: rotate(180deg);
+}
+
+.apple-sheet .write-more-options__body {
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--app-border);
+}
+
+.apple-sheet .write-place-optional {
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  background: var(--app-surface);
+  overflow: hidden;
+}
+
+.apple-sheet .write-place-optional__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: none;
+  background: none;
+  font-family: var(--app-font);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.apple-sheet .write-place-optional__badge {
+  margin-left: auto;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--app-text-tertiary);
+}
+
+.apple-sheet .write-place-optional__chevron {
+  flex-shrink: 0;
+  color: var(--app-text-tertiary);
+  transition: transform 0.2s ease;
+}
+
+.apple-sheet .write-place-optional__chevron--open {
+  transform: rotate(180deg);
+}
+
+.apple-sheet .write-place-optional__panel {
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--app-border);
+}
+
+.apple-sheet .write-place-optional__set {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.apple-sheet .write-method-btn--subtle {
+  min-height: 52px;
+  padding: 12px 14px;
+}
+
+.apple-sheet .write-flow-safety {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--app-text-tertiary);
+}
+
+.apple-sheet .write-flow-error {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.04);
+  font-size: 0.875rem;
+  color: var(--app-text-secondary);
+}
+
+.apple-sheet .write-letter-form__submit {
+  position: sticky;
+  bottom: 0;
+  padding-top: 8px;
+  padding-bottom: 4px;
+  background: linear-gradient(to top, var(--app-surface) 70%, transparent);
+}
+
+.apple-sheet .write-letter-form textarea.share-flow-input {
+  min-height: 140px;
+  line-height: 1.6;
+  font-family: var(--app-serif);
+  font-size: 1rem;
+}
+
+.apple-sheet .write-letter-form .share-flow-input {
+  font-family: var(--app-font);
+}
+
+.apple-sheet .write-letter-form #write-body.share-flow-input {
+  font-family: var(--app-serif);
+}
+
+/* Mini map inside letter read */
+.letter-sheet .note-location-map__frame {
+  height: 140px;
+}
+
+/* Write flow: message type + emotion options */
+.apple-sheet .message-type-chip {
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: var(--app-elevated);
+  color: var(--app-text-secondary);
+  font-family: var(--app-font);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.apple-sheet .message-type-chip--active {
+  background: var(--app-accent);
+  border-color: var(--app-accent);
+  color: #fff;
+}
+
+.apple-sheet .emotion-color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.apple-sheet .emotion-color-dot {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.apple-sheet .emotion-color-dot__ring {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--emotion-accent, var(--app-accent));
+  opacity: 0.5;
+  transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.apple-sheet .emotion-color-dot--active .emotion-color-dot__ring {
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow:
+    0 0 0 2px var(--app-surface),
+    0 0 0 3px var(--emotion-accent, var(--app-accent));
+}
+
+.apple-sheet .share-flow-location-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--app-accent-soft);
+  color: var(--app-text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.apple-sheet .share-flow-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+  color: var(--app-text-tertiary);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.apple-sheet .share-flow-divider::before,
+.apple-sheet .share-flow-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--app-border);
+}
+
+.apple-sheet .share-flow-divider span {
+  flex-shrink: 0;
+}
+
+.apple-sheet .write-flow-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--app-text-secondary);
+}
+
+.apple-sheet .write-flow-micro {
+  margin: 6px 0 0;
+  font-size: 0.6875rem;
+  color: var(--app-text-tertiary);
+}
+
+.apple-sheet .write-flow-link {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 8px;
+  border: none;
+  background: none;
+  font-family: var(--app-font);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--app-accent);
+  cursor: pointer;
+}
+
+.apple-sheet .share-flow-success {
+  text-align: center;
+  padding: 12px 0 4px;
+}
+
+.apple-sheet .share-flow-success__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--app-accent-soft);
+  color: var(--app-accent);
+}
+
+.apple-sheet .share-flow-success__title {
+  margin: 0;
+  font-family: var(--app-serif);
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+.apple-sheet .share-flow-success__text {
+  margin: 12px auto 24px;
+  max-width: 280px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--app-text-secondary);
+}
+
+/* Map location pick bar */
+.app-viewport--map .map-pick-bar {
+  z-index: 1200;
+  bottom: calc(var(--app-clearance) + 8px) !important;
+}
+
+.app-viewport--map .map-pick-bar__inner {
+  border-radius: 16px !important;
+  padding: 14px 16px !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--app-border) !important;
+  box-shadow: var(--app-shadow-md) !important;
+}
+
+.app-viewport--map .map-pick-bar__back {
+  min-height: 44px;
+  margin-top: 8px;
+  font-family: var(--app-font);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--app-accent);
+}
+
+/* Desktop: compact floating search sheet */
+@media (min-width: 768px) {
+  .apple-sheet-root:not(.apple-sheet-root--center) {
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 24px calc(var(--app-clearance) + 12px);
+  }
+
+  .apple-sheet--search {
+    max-width: 420px;
+    border-radius: 16px;
+    max-height: 300px;
+    box-shadow: var(--app-shadow-lg);
+  }
+
+  .apple-tab-bar {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(320px, calc(100vw - 48px));
+  }
+}
+
+/* Mobile: kill legacy pin scale blow-up */
+@media (max-width: 767px) {
+  .app-viewport--map .custom-marker .memory-pin,
+  .app-viewport--map .custom-marker.pin-active .memory-pin {
+    transform: none !important;
+    animation: none !important;
+    filter: none !important;
+  }
+}

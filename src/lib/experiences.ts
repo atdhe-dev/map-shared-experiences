@@ -4,6 +4,8 @@ import { haversineKm } from './geocoding'
 import { NEAR_ME_RADIUS_KM } from './constants'
 import { prepareImageForUpload } from './imageUpload'
 import { supabase } from './supabase'
+import { resolveEmotionColor } from './emotionColors'
+import { experienceMatchesMessageType } from './messageFilters'
 
 export async function fetchApprovedExperiences(): Promise<Experience[]> {
   const { data, error } = await supabase
@@ -136,6 +138,31 @@ export async function addReaction(
   return result
 }
 
+export async function reportExperience(experienceId: string): Promise<void> {
+  const { error } = await supabase.rpc('increment_experience_reports', {
+    p_experience_id: experienceId,
+  })
+
+  if (error) {
+    // Fallback if RPC missing: direct update
+    const { data: row } = await supabase
+      .from('experiences')
+      .select('reports_count')
+      .eq('id', experienceId)
+      .single()
+
+    if (row) {
+      const { error: updateError } = await supabase
+        .from('experiences')
+        .update({ reports_count: (row.reports_count ?? 0) + 1 })
+        .eq('id', experienceId)
+      if (updateError) throw new Error(updateError.message || 'Could not report message.')
+      return
+    }
+    throw new Error(error.message || 'Could not report message.')
+  }
+}
+
 export function filterExperiences(
   experiences: Experience[],
   filters: ExperienceFilters,
@@ -144,17 +171,21 @@ export function filterExperiences(
   let result = [...experiences]
 
   if (filters.searchQuery.trim()) {
-    const q = filters.searchQuery.toLowerCase()
-    result = result.filter(
-      (e) =>
-        e.title.toLowerCase().includes(q) ||
-        e.story.toLowerCase().includes(q) ||
-        e.location_name?.toLowerCase().includes(q),
-    )
+    const q = filters.searchQuery.toLowerCase().trim()
+    result = result.filter((e) => {
+      const name = (e.message_to || '').toLowerCase()
+      return name.includes(q)
+    })
   }
 
-  if (filters.category) {
-    result = result.filter((e) => e.category === filters.category)
+  if (filters.messageType) {
+    result = result.filter((e) => experienceMatchesMessageType(e, filters.messageType!))
+  }
+
+  if (filters.emotionColor) {
+    result = result.filter(
+      (e) => resolveEmotionColor(e.emotion_color, e.category) === filters.emotionColor,
+    )
   }
 
   if (filters.withPhotos) {
@@ -163,10 +194,6 @@ export function filterExperiences(
 
   if (filters.anonymousOnly) {
     result = result.filter((e) => e.author_mode === 'anonymous')
-  }
-
-  if (filters.recommendationsOnly) {
-    result = result.filter((e) => e.category === 'recommendation')
   }
 
   if (filters.nearMe && userLocation) {

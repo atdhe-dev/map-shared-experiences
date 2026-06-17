@@ -5,7 +5,7 @@ import {
   addReaction,
   fetchApprovedExperiences,
   filterExperiences,
-  getNearbyExperiences,
+  reportExperience,
 } from '../lib/experiences'
 import { hasReactedToExperience } from '../lib/fingerprint'
 import { isSupabaseConfigured } from '../lib/supabase'
@@ -13,37 +13,33 @@ import { useGeolocation, useMediaQuery } from '../hooks'
 import { MapView } from '../components/map/MapView'
 import { WelcomeOverlay } from '../components/WelcomeOverlay'
 import { AppFrame } from '../components/layout/AppFrame'
-import { Sidebar } from '../components/layout/Sidebar'
-import { MapTopBar } from '../components/layout/MapTopBar'
-import { BottomNav } from '../components/layout/BottomNav'
-import { SearchBar } from '../components/SearchBar'
-import { FilterPanel } from '../components/FilterPanel'
-import { NearMeCard } from '../components/NearMeCard'
-import { StoryCard } from '../components/StoryCard'
-import { ExperienceDetailWrapper } from '../components/ExperienceDetail'
+import { HomeHud, type AppViewMode } from '../components/layout/HomeHud'
+import { ExploreFloat } from '../components/layout/ExploreFloat'
+import { DeskRoom } from '../components/desk/DeskRoom'
+import { LetterReadView } from '../components/desk/LetterReadView'
 import { AddExperienceFlow } from '../components/AddExperienceFlow'
 import { BottomSheet } from '../components/ui/BottomSheet'
 import { Modal } from '../components/ui/Modal'
-import { LoadingSpinner, EmptyState } from '../components/ui/CategoryChip'
 import { shortenPlaceName } from '../lib/geocoding'
 import { WELCOME_DISMISSED_KEY } from '../lib/constants'
 
-type Panel = 'none' | 'search' | 'filter' | 'add' | 'detail'
+type Panel = 'none' | 'explore' | 'add' | 'detail'
 
 const defaultFilters: ExperienceFilters = {
-  category: null,
+  messageType: null,
+  emotionColor: null,
   sort: 'newest',
   nearMe: false,
   withPhotos: false,
   anonymousOnly: false,
-  recommendationsOnly: false,
   searchQuery: '',
 }
 
 export function MapPage() {
   const isMobile = useMediaQuery('(max-width: 767px)')
-  const { location: userLocation, status: geoStatus, requestLocation } = useGeolocation()
+  const { location: userLocation, status: geoStatus } = useGeolocation()
 
+  const [viewMode, setViewMode] = useState<AppViewMode>('desk')
   const [experiences, setExperiences] = useState<Experience[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +48,7 @@ export function MapPage() {
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null)
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({})
   const [reacting, setReacting] = useState(false)
-  const [showNearMeCard, setShowNearMeCard] = useState(false)
+  const [reporting, setReporting] = useState(false)
 
   const [addOpen, setAddOpen] = useState(false)
   const [selectMode, setSelectMode] = useState(false)
@@ -61,7 +57,6 @@ export function MapPage() {
   const [locationName, setLocationName] = useState('')
   const [flyTo, setFlyTo] = useState<LatLng | null>(null)
   const [addFlowKey, setAddFlowKey] = useState(0)
-  const [previewExperience, setPreviewExperience] = useState<Experience | null>(null)
   const [reactionError, setReactionError] = useState<string | null>(null)
   const [welcomeActive, setWelcomeActive] = useState(() => {
     try {
@@ -70,6 +65,8 @@ export function MapPage() {
       return true
     }
   })
+
+  const showMap = viewMode === 'map' || selectMode
 
   const loadExperiences = useCallback(async () => {
     if (!isSupabaseConfigured) {
@@ -85,7 +82,7 @@ export function MapPage() {
       data.forEach((e) => { counts[e.id] = e.reactions_count })
       setReactionCounts(counts)
     } catch {
-      setError('Could not load experiences. Please refresh.')
+      setError('Could not load messages. Please refresh.')
     } finally {
       setLoading(false)
     }
@@ -113,31 +110,31 @@ export function MapPage() {
     }
   }, [geoStatus, userLocation, filters.nearMe])
 
+  useEffect(() => {
+    const lockScroll =
+      welcomeActive ||
+      panel === 'detail' ||
+      panel === 'explore' ||
+      (panel === 'add' && addOpen)
+
+    document.documentElement.classList.toggle('diary-scroll-lock', lockScroll)
+    document.body.classList.toggle('diary-scroll-lock', lockScroll)
+
+    return () => {
+      document.documentElement.classList.remove('diary-scroll-lock')
+      document.body.classList.remove('diary-scroll-lock')
+    }
+  }, [welcomeActive, panel, addOpen])
+
   const filteredExperiences = useMemo(
     () => filterExperiences(experiences, filters, userLocation),
     [experiences, filters, userLocation],
   )
 
-  const nearbyExperiences = useMemo(() => {
-    if (!userLocation) return []
-    return getNearbyExperiences(experiences, userLocation)
-  }, [experiences, userLocation])
-
-  useEffect(() => {
-    if (userLocation && nearbyExperiences.length > 0) {
-      setShowNearMeCard(true)
-    }
-  }, [userLocation, nearbyExperiences.length])
-
-  const handleNearMe = () => {
-    if (geoStatus === 'granted' && userLocation) {
-      setFilters((f) => ({ ...f, nearMe: true }))
-      setFlyTo(userLocation)
-    } else {
-      requestLocation()
-      setFilters((f) => ({ ...f, nearMe: true }))
-    }
-  }
+  const mapExperiences = useMemo(
+    () => filteredExperiences.filter((e) => Boolean(e.location_name?.trim())),
+    [filteredExperiences],
+  )
 
   const handleMapClick = (latlng: LatLng) => {
     if (!selectMode) return
@@ -155,6 +152,7 @@ export function MapPage() {
   }
 
   const handleStartMapPick = () => {
+    setViewMode('map')
     setSelectMode(true)
     setPanel('add')
     setAddOpen(true)
@@ -191,7 +189,6 @@ export function MapPage() {
   const closeStoryPanel = () => {
     setPanel('none')
     setSelectedExperience(null)
-    setPreviewExperience(null)
     setReactionError(null)
   }
 
@@ -201,23 +198,33 @@ export function MapPage() {
     resetLocationState()
   }
 
-  const handleReadMore = (exp: Experience) => {
-    setPreviewExperience(null)
+  const toggleExplore = () => {
+    setPanel((p) => (p === 'explore' ? 'none' : 'explore'))
+  }
+
+  const toggleViewMode = () => {
+    setViewMode((v) => (v === 'desk' ? 'map' : 'desk'))
+    if (panel === 'detail') closeStoryPanel()
+  }
+
+  const openMap = () => {
+    setViewMode('map')
+  }
+
+  const handleLetterTap = (exp: Experience) => {
     setSelectedExperience(exp)
     setPanel('detail')
     setFlyTo({ lat: exp.lat, lng: exp.lng })
   }
 
-  const handlePinSelect = (exp: Experience) => {
-    if (isMobile) {
-      setPreviewExperience((current) => (current?.id === exp.id ? null : exp))
-      setPanel('none')
-      return
-    }
-    handleReadMore(exp)
+  const handleOpenAdjacent = (exp: Experience) => {
+    setSelectedExperience(exp)
+    setFlyTo({ lat: exp.lat, lng: exp.lng })
   }
 
-  const closePreview = () => setPreviewExperience(null)
+  const handlePinSelect = (exp: Experience) => {
+    handleLetterTap(exp)
+  }
 
   const handleReact = async (id: string) => {
     if (hasReactedToExperience(id)) return
@@ -226,7 +233,7 @@ export function MapPage() {
     try {
       const result = await addReaction(id)
       if (!result.success) {
-        setReactionError('You already touched this story.')
+        setReactionError('You already felt this message.')
         return
       }
       setReactionCounts((prev) => ({ ...prev, [id]: result.reactions_count }))
@@ -247,7 +254,24 @@ export function MapPage() {
     }
   }
 
-  /** Back from map-pick to the “choose method” step inside the add flow */
+  const handleReport = async (id: string) => {
+    if (!confirm('Report this message for moderation review?')) return
+    setReporting(true)
+    setReactionError(null)
+    try {
+      await reportExperience(id)
+      setExperiences((prev) =>
+        prev.map((e) =>
+          e.id === id ? { ...e, reports_count: e.reports_count + 1 } : e,
+        ),
+      )
+    } catch (err) {
+      setReactionError(err instanceof Error ? err.message : 'Could not report message.')
+    } finally {
+      setReporting(false)
+    }
+  }
+
   const handleCancelLocation = () => {
     resetLocationState()
     setPanel('add')
@@ -273,34 +297,115 @@ export function MapPage() {
     locationName,
   }
 
-  const sidebarProps = {
+  const exploreProps = {
     filters,
     onChange: setFilters,
-    onNearMe: handleNearMe,
-    nearMeActive: filters.nearMe,
-    geoDenied: geoStatus === 'denied',
-    storyCount: filteredExperiences.length,
-    onShare: handleStartAdd,
   }
 
+  const chromeHidden =
+    welcomeActive ||
+    selectMode ||
+    panel === 'add' ||
+    panel === 'detail'
+
+  const emptyFiltered = !loading && !error && filteredExperiences.length === 0 && experiences.length > 0
+  const emptyDesk = !loading && !error && experiences.length === 0
+
+  const selectedIndex = selectedExperience
+    ? filteredExperiences.findIndex((e) => e.id === selectedExperience.id)
+    : -1
+
+  const letterProps = selectedExperience
+    ? {
+        experience: selectedExperience,
+        pageIndex: selectedIndex >= 0 ? selectedIndex + 1 : undefined,
+        pageTotal: filteredExperiences.length,
+        nextExperience:
+          selectedIndex >= 0 && selectedIndex < filteredExperiences.length - 1
+            ? filteredExperiences[selectedIndex + 1]
+            : null,
+        previousExperience:
+          selectedIndex > 0 ? filteredExperiences[selectedIndex - 1] : null,
+        onClose: closeStoryPanel,
+        onNext:
+          selectedIndex >= 0 && selectedIndex < filteredExperiences.length - 1
+            ? () => handleOpenAdjacent(filteredExperiences[selectedIndex + 1])
+            : undefined,
+        onPrevious:
+          selectedIndex > 0
+            ? () => handleOpenAdjacent(filteredExperiences[selectedIndex - 1])
+            : undefined,
+        onReact: handleReact,
+        onReport: handleReport,
+        reacting,
+        reporting,
+        reactionCount:
+          reactionCounts[selectedExperience.id] ?? selectedExperience.reactions_count,
+        hasReacted: hasReactedToExperience(selectedExperience.id),
+        reactionError,
+      }
+    : null
+
+  const frameMode = showMap ? 'map' : 'desk'
+
   return (
-    <AppFrame
-      sidebar={!isMobile ? <Sidebar {...sidebarProps} /> : undefined}
-    >
-      <div className={`relative h-full w-full map-shell${previewExperience ? ' map-shell--pin-preview' : ''}`}>
-        <MapView
-          experiences={filteredExperiences}
-          onSelect={handlePinSelect}
-          previewExperience={isMobile ? previewExperience : null}
-          onPreviewClose={closePreview}
-          onPreviewReadMore={handleReadMore}
-          selectMode={selectMode}
-          tempLocation={tempLocation}
-          onMapClick={handleMapClick}
-          userLocation={userLocation}
-          flyTo={flyTo}
-          insetControls={isMobile}
-        />
+    <AppFrame mode={frameMode}>
+      <div className={`relative w-full app-shell${showMap ? ' h-full min-h-0' : ''}`}>
+        {!showMap && (
+          <DeskRoom
+            experiences={filteredExperiences}
+            onRead={handleLetterTap}
+            onOpenMap={openMap}
+            loading={loading}
+            error={error}
+            emptyFiltered={emptyFiltered}
+            emptyDesk={emptyDesk}
+          />
+        )}
+
+        {showMap && (
+          <div className="relative h-full w-full map-shell map-shell--visible">
+            <MapView
+              experiences={mapExperiences}
+              onSelect={handlePinSelect}
+              selectMode={selectMode}
+              tempLocation={tempLocation}
+              onMapClick={handleMapClick}
+              userLocation={userLocation}
+              flyTo={flyTo}
+              insetControls
+            />
+
+            {error && !loading && (
+              <div className="map-toast">
+                <p>{error}</p>
+              </div>
+            )}
+
+            {emptyFiltered && panel === 'none' && (
+              <div className="map-toast">
+                <strong>Nothing here yet</strong>
+                <p>Try a different name.</p>
+              </div>
+            )}
+
+            {emptyDesk && panel === 'none' && (
+              <div className="map-toast">
+                <strong>The map is quiet</strong>
+                <p>Be the first to leave something here.</p>
+              </div>
+            )}
+
+            {selectMode && (
+              <MapPickBar
+                hasLocation={!!tempLocation}
+                onConfirm={handleConfirmLocation}
+                onChooseAgain={() => setTempLocation(null)}
+                onBack={handleMapPickBack}
+              />
+            )}
+          </div>
+        )}
 
         <WelcomeOverlay
           onExplore={() => {}}
@@ -308,140 +413,35 @@ export function MapPage() {
           onActiveChange={setWelcomeActive}
         />
 
-        {(!isMobile || !welcomeActive) && (
-          <MapTopBar
-            compact={isMobile}
-            onSearch={() => setPanel(panel === 'search' ? 'none' : 'search')}
-            onFilter={() => setPanel(panel === 'filter' ? 'none' : 'filter')}
-            searchActive={panel === 'search'}
-            filterActive={panel === 'filter'}
-            showSearch={isMobile}
-          />
-        )}
-
-        {showNearMeCard && nearbyExperiences.length > 0 && (
-          <div className="absolute bottom-[calc(var(--mobile-bottom-clearance)+12px)] md:bottom-8 left-4 md:left-6 z-[1000] max-w-[calc(100%-2rem)]">
-            <NearMeCard
-              experiences={nearbyExperiences}
-              onSelect={(exp) => {
-                handlePinSelect(exp)
-              }}
-              onClose={() => setShowNearMeCard(false)}
-            />
-          </div>
-        )}
-
-        {!isMobile && selectedExperience && panel === 'detail' && (
-          <div className="absolute top-20 right-5 bottom-24 z-[1000] w-[340px] pointer-events-none">
-            <div className="pointer-events-auto h-full">
-              <StoryCard
-                experience={selectedExperience}
-                onClose={closeStoryPanel}
-                onReact={handleReact}
-                reacting={reacting}
-                reactionCount={
-                  reactionCounts[selectedExperience.id] ?? selectedExperience.reactions_count
-                }
-                hasReacted={hasReactedToExperience(selectedExperience.id)}
-                reactionError={reactionError}
-              />
-            </div>
-          </div>
-        )}
-
-        {loading && (
-          <div className="absolute inset-0 z-[900] flex items-center justify-center pointer-events-none">
-            <div className="glass-strong rounded-2xl px-6 py-4 shadow-lg border border-stone-light/50">
-              <LoadingSpinner message="Loading stories…" />
-            </div>
-          </div>
-        )}
-
-        {error && !loading && (
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[1000] glass-strong rounded-2xl px-5 py-3 shadow-lg max-w-sm border border-stone-light/50">
-            <p className="text-sm text-charcoal-soft">{error}</p>
-          </div>
-        )}
-
-        {!loading && !error && filteredExperiences.length === 0 && experiences.length > 0 && (
-          <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[1000] glass-strong rounded-2xl shadow-lg border border-stone-light/50">
-            <EmptyState
-              title="No stories match"
-              message="Try adjusting your filters or search terms."
-            />
-          </div>
-        )}
-
-        {!loading && !error && experiences.length === 0 && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] glass-strong rounded-2xl shadow-lg max-w-xs border border-stone-light/50">
-            <EmptyState
-              title="The map awaits"
-              message="Be the first to leave a memory on this map."
-            />
-          </div>
-        )}
-
-        {selectMode && (
-          <MapPickBar
-            hasLocation={!!tempLocation}
-            onConfirm={handleConfirmLocation}
-            onChooseAgain={() => setTempLocation(null)}
-            onBack={handleMapPickBack}
-          />
-        )}
-
-        {!selectMode && (!isMobile || !welcomeActive) && <BottomNav onAdd={handleStartAdd} />}
+        <HomeHud
+          hidden={chromeHidden}
+          viewMode={showMap ? 'map' : 'desk'}
+          exploreOpen={panel === 'explore'}
+          onExplore={toggleExplore}
+          onWrite={handleStartAdd}
+          onToggleView={toggleViewMode}
+        />
       </div>
 
-      {isMobile && panel === 'search' && (
-        <BottomSheet open title="Search" onClose={() => setPanel('none')}>
-          <SearchBar
-            value={filters.searchQuery}
-            onChange={(q) => setFilters((f) => ({ ...f, searchQuery: q }))}
-            variant="mobile"
-          />
-        </BottomSheet>
-      )}
-
-      {isMobile && panel === 'filter' && (
-        <BottomSheet open title="Filters" onClose={() => setPanel('none')}>
-          <FilterPanel
-            filters={filters}
-            onChange={setFilters}
-            onNearMe={handleNearMe}
-            nearMeActive={filters.nearMe}
-            geoDenied={geoStatus === 'denied'}
-          />
-        </BottomSheet>
-      )}
+      <ExploreFloat
+        open={panel === 'explore'}
+        onClose={() => setPanel('none')}
+        {...exploreProps}
+      />
 
       {panel === 'add' && addOpen && !selectMode && (
         isMobile ? (
-          <BottomSheet open title="Share a memory" onClose={closeAddFlow} variant="share">
+          <BottomSheet open title="Unsent note" onClose={closeAddFlow} variant="share">
             <AddExperienceFlow key={addFlowKey} {...addFlowProps} />
           </BottomSheet>
         ) : (
-          <Modal open title="Share a memory" onClose={closeAddFlow} variant="share">
+          <Modal open title="Unsent note" onClose={closeAddFlow} variant="share">
             <AddExperienceFlow key={addFlowKey} {...addFlowProps} />
           </Modal>
         )
       )}
 
-      {isMobile && panel === 'detail' && selectedExperience && (
-        <BottomSheet open title="" onClose={closeStoryPanel}>
-          <ExperienceDetailWrapper
-            experience={selectedExperience}
-            onClose={closeStoryPanel}
-            onReact={handleReact}
-            reacting={reacting}
-            reactionCount={
-              reactionCounts[selectedExperience.id] ?? selectedExperience.reactions_count
-            }
-            hasReacted={hasReactedToExperience(selectedExperience.id)}
-            reactionError={reactionError}
-          />
-        </BottomSheet>
-      )}
+      {panel === 'detail' && letterProps && <LetterReadView {...letterProps} />}
     </AppFrame>
   )
 }
