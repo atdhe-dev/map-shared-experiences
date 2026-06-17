@@ -10,9 +10,9 @@
   --app-text-tertiary: #aeaeb2;
   --app-accent: #5b7c99;
   --app-accent-soft: #e8eef3;
-  --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --app-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --app-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+  --app-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.10);
+  --app-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.14);
+  --app-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.18);
   --app-font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --app-serif: 'Fraunces', Georgia, serif;
   --app-nav-h: 56px;
@@ -56,10 +56,12 @@ body:has(.app-viewport--map) {
 
 body:has(.app-viewport--desk),
 body:has(.app-viewport--map) {
-  background: var(--app-bg) !important;
+  background-color: #e2ddd6 !important;
   background-image:
-    radial-gradient(ellipse 100% 60% at 50% -20%, rgba(255, 255, 255, 0.9) 0%, transparent 60%),
-    linear-gradient(180deg, #fafaf8 0%, var(--app-bg) 100%) !important;
+    radial-gradient(ellipse 100% 50% at 50% -5%, rgba(255, 255, 255, 0.55) 0%, transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='80'%3E%3Crect width='160' height='80' fill='%23d6d1c9'/%3E%3Crect x='0' y='0' width='76' height='36' fill='%23ebe7e1'/%3E%3Crect x='80' y='0' width='76' height='36' fill='%23ebe7e1'/%3E%3Crect x='0' y='40' width='36' height='36' fill='%23ebe7e1'/%3E%3Crect x='40' y='40' width='76' height='36' fill='%23ebe7e1'/%3E%3Crect x='120' y='40' width='40' height='36' fill='%23ebe7e1'/%3E%3C/svg%3E") !important;
+  background-size: auto, 160px 80px !important;
+  background-repeat: no-repeat, repeat !important;
 }
 
 body:has(.app-viewport--desk)::before,
@@ -182,10 +184,10 @@ body:has(.app-viewport--map)::after {
   padding: max(12px, env(safe-area-inset-top)) 16px 16px;
   padding-left: max(16px, env(safe-area-inset-left));
   padding-right: max(16px, env(safe-area-inset-right));
-  background: rgba(245, 244, 241, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--app-border);
+  background: rgba(235, 231, 225, 0.90);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
 }
 
 .wall__header-text {
@@ -583,10 +585,10 @@ body:has(.app-viewport--map)::after {
   padding: max(10px, env(safe-area-inset-top)) 16px 10px;
   padding-left: max(16px, env(safe-area-inset-left));
   padding-right: max(16px, env(safe-area-inset-right));
-  background: rgba(245, 244, 241, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--app-border);
+  background: rgba(235, 231, 225, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
 }
 
 .note-read__back {
